@@ -1,0 +1,40 @@
+/**
+ * Author: lin
+ * Date: 2019/3/24 15:39
+ */
+package com.prd.approval.controller;
+
+
+import com.prd.approval.entity.User;
+import com.prd.approval.service.UserService;
+import com.prd.approval.utils.ResponseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@CrossOrigin(origins = "*", maxAge = 3600)
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    private static Logger logger = Logger.getLogger(UserController.class.getSimpleName());
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/login")
+    public ResponseUtil<User> login(HttpServletRequest request, @RequestBody User webUser){
+        Enumeration<String> headerNames = request.getHeaderNames();
+        //获取获取的消息头名称，获取对应的值，并输出
+        while (headerNames.hasMoreElements()) {
+            String nextElement = headerNames.nextElement();
+            logger.log(Level.WARNING,nextElement + ":" + request.getHeader(nextElement));
+        }
+        return userService.login(webUser);
+
+    }
+}

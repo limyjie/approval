@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.ProcessDAO">
+
+
+
+    <resultMap id="processMap" type="com.prd.approval.entity.Process">
+        <id column="IDNO" property="Id"/>
+        <result column="EVENT_ID" property="eventId"/>
+        <result column="SORT_NO" property="sortNo"/>
+        <result column="STEP_COUNT" property="stepCount"/>
+        <result column="SOURCE_STEP_ID" property="sourceStepId"/>
+        <result column="STEP_CODE" property="stepCode"/>
+        <result column="STEP_TYPE" property="stepType"/>
+        <result column="STEP_NAME" property="stepName"/>
+        <result column="STEP_DESCRIPTION" property="stepDescription"/>
+        <result column="TIMES_COUNT" property="timesCount"/>
+        <result column="STATUS" property="status"/>
+        <result column="TIMES_REMAIN" property="timesRemain"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+
+    </resultMap>
+
+
+   <insert id="insertProcess">
+       INSERT INTO AP_STEP(
+
+               )
+   </insert>
+
+</mapper>

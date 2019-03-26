@@ -28,12 +28,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseUtil<User> login(HttpServletRequest request, @RequestBody User webUser){
-        Enumeration<String> headerNames = request.getHeaderNames();
-        //获取获取的消息头名称，获取对应的值，并输出
-        while (headerNames.hasMoreElements()) {
-            String nextElement = headerNames.nextElement();
-            logger.log(Level.WARNING,nextElement + ":" + request.getHeader(nextElement));
-        }
+
         return userService.login(webUser);
 
     }

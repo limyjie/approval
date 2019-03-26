@@ -48,7 +48,7 @@ public class HttpAspect {
         logger.log(Level.WARNING, "ContextPath: " + request.getContextPath());
         logger.log(Level.WARNING, "RequestURI: " + request.getRequestURI());
         logger.log(Level.WARNING, "Method: " + request.getMethod());
-      //  logger.log(Level.WARNING, "Parameters: " + JSON.toJSONString(joinPoint.getArgs()));
+        logger.log(Level.WARNING, "Parameters: " + JSON.toJSONString(joinPoint.getArgs()));
 
         logger.log(Level.WARNING, "------------");
         logger.log(Level.WARNING, "");

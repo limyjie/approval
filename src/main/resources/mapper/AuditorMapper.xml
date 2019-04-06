@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.AuditorDAO">
+
+    <sql id="auditorColumn">
+        EMNO,NAMA,LOGINID,DUTY,DEPA
+    </sql>
+
+    <resultMap id="auditorMap" type="com.prd.approval.entity.Auditor">
+        <id column="EMNO" property="id" javaType="String" jdbcType="VARCHAR"/>
+        <result column="NAMA" property="name"/>
+        <result column="LOGINID" property="loginName"/>
+        <result column="DUTY" property="duty"/>
+        <result column="DEPA" property="department"/>
+    </resultMap>
+
+    <select id="selectAllAuditor" resultMap="auditorMap">
+        SELECT
+          <include refid="auditorColumn"/>
+        FROM TCCOM001
+    </select>
+
+    <select id="selectAllAuditor4Frontend" resultMap="auditorMap">
+        SELECT t.EMNO,t.NAMA,CONCAT(t.DEPA,f.DSCA) AS DEPA
+        FROM TCCOM001 t,FI023 f
+        WHERE t.DEPA = f.DEPA
+    </select>
+
+    <select id="selectAuditorById" parameterType="String" resultMap="auditorMap">
+        SELECT
+        <include refid="auditorColumn"/>
+        FROM TCCOM001
+        WHERE EMNO = #{id}
+    </select>
+
+</mapper>

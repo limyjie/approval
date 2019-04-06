@@ -13,8 +13,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-@Configuration
+/*@Configuration
 @EnableWebMvc
+
+不需要此类
+
+*/
 public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override

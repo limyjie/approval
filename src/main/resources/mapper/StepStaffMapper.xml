@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.StepStaffDAO">
+
+    <sql id="stepStaffColumn">
+        IDNO,HID,STATUS,SORT_NO,STAFF_NO,STAFF_NAME,STAFF_DEPA,STAFF_DEPA_NAME,
+        AP_RESULT,AP_COMMENT,AP_DATE
+    </sql>
+
+    <resultMap id="stepStaffMap" type="com.prd.approval.entity.Auditor">
+        <id column="idno" property="id"/>
+        <result column="hid" property="hId"/>
+        <result column="status" property="status"/>
+        <result column="sort_no" property="sortNo"/>
+        <result column="staff_no" property="staffNo"/>
+        <result column="staff_name" property="staffName"/>
+        <result column="staff_depa" property="staffDepa"/>
+        <result column="staff_depa_name" property="staffDepaName"/>
+        <result column="ap_result" property="apResult"/>
+        <result column="ap_comment" property="apComment"/>
+        <result column="ap_date" property="apDate"/>
+    </resultMap>
+
+    <insert id="insertStaffStaff" parameterType="com.prd.approval.entity.StepStaff">
+        INSERT INTO AP_STEP_STAFF (IDNO,
+                                   HID,
+                                   STATUS,
+                                   SORT_NO,
+                                   STAFF_NO,
+                                   STAFF_NAME,
+                                   STAFF_DEPA,
+                                   STAFF_DEPA_NAME,
+                                   AP_RESULT,
+                                   AP_COMMENT,
+                                   AP_DATE)
+        VALUES (#{id},
+                #{hId},
+                #{status},
+                #{sortNo},
+                #{staffNo},
+                #{staffName},
+                #{staffDepa},
+                #{staffDepaName},
+                #{apResult},
+                #{apComment},
+                #{apDate})
+    </insert>
+</mapper>

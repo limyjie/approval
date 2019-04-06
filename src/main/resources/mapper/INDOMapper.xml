@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.IDNODAO">
+
+    <select id="selectCurrentIDNO" resultType="int">
+        SELECT FFNO
+        FROM TCMCS047
+        WHERE CKON = 0
+          AND GRNO = 'id'
+    </select>
+
+    <update id="updateIDNOAfterSelect">
+        UPDATE TCMCS047
+        SET FFNO = FFNO + 1
+        WHERE CKON = 0
+          AND GRNO = 'id'
+    </update>
+
+</mapper>

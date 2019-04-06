@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +22,6 @@ import java.util.logging.Logger;
 @RequestMapping("/user")
 public class UserController {
 
-    private static Logger logger = Logger.getLogger(UserController.class.getSimpleName());
 
     @Autowired
     private UserService userService;
@@ -30,6 +30,10 @@ public class UserController {
     public ResponseUtil<User> login(HttpServletRequest request, @RequestBody User webUser){
 
         return userService.login(webUser);
+    }
 
+    @GetMapping("/getAll")
+    public ResponseUtil<List<User>> getAll(){
+        return userService.findAllUser();
     }
 }

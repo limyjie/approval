@@ -12,6 +12,8 @@ import com.prd.approval.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,8 +36,19 @@ public class UserServiceImpl implements UserService {
             return new ResponseUtil<>(0, "账号或密码错误");
         }
 
-        return new ResponseUtil<>(1, "登陆成功");
+        return new ResponseUtil<>(1, "登陆成功",user);
 
+
+    }
+
+    @Override
+    public ResponseUtil<List<User>> findAllUser() {
+
+        List<User> userList = userDAO.selectAllUser();
+        if(userList==null){
+            return new ResponseUtil<>(0,"查找用户失败");
+        }
+        return new ResponseUtil<List<User>>(1,"查找用户成功",userList);
 
     }
 }

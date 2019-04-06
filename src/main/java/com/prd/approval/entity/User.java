@@ -7,6 +7,10 @@ package com.prd.approval.entity;
 
 import java.io.Serializable;
 
+/*
+* 登陆人
+*
+* */
 public class User implements Serializable {
 
     private String id;

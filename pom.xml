@@ -11,6 +11,7 @@
     <groupId>com.prd</groupId>
     <artifactId>approval</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>approval</name>
     <description>Demo project for Spring Boot</description>
 
@@ -47,6 +48,18 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.56</version>
+        </dependency>
+
+        <!--以下为部署时添加-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ojdbc</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>6.0</version>
         </dependency>
 
     </dependencies>

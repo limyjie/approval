@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.prd.approval.dao.ProcessDAO">
 
-
+    <sql id="processColumn">
+        IDNO, EVENT_ID, SORT_NO, STEP_COUNT, SOURCE_STEP_ID, STEP_CODE, STEP_TYPE,
+        STEP_NAME, STEP_DESCRIPTION, TIMES_COUNT, STATUS, CREATE_BY, TIMES_REMAIN, CREATE_DATE
+    </sql>
 
     <resultMap id="processMap" type="com.prd.approval.entity.Process">
         <id column="IDNO" property="Id"/>
@@ -23,10 +26,29 @@
     </resultMap>
 
 
-   <insert id="insertProcess">
-       INSERT INTO AP_STEP(
+    <insert id="insertProcess" parameterType="com.prd.approval.entity.Process">
+        INSERT INTO AP_STEP
+        <!--(<include refid="processColumn"/>)-->
+        (IDNO,EVENT_ID,SORT_NO,STEP_COUNT,SOURCE_STEP_ID,
+        STEP_CODE,STEP_TYPE,STEP_NAME,STEP_DESCRIPTION,TIMES_COUNT,STATUS,
+        TIMES_REMAIN,CREATE_BY,CREATE_DATE)
+        values (
+        #{Id},#{eventId},#{sortNo},#{stepCount},#{sourceStepId},
+        #{stepCode},#{stepType},#{stepName},#{stepDescription},#{timesCount},
+        #{status},#{timesRemain},#{createBy},#{createDate}
+        <!--#{Id},#{eventId,jdbcType=VARCHAR},#{sortNo},
+    #{stepCount},#{sourceStepId},#{stepCode},
+    #{stepType},#{stepName},#{stepDescription},
+    #{timesCount},#{status},
+    #{timesRemain},#{createBy},#{createDate}-->
+        )
+    </insert>
 
-               )
-   </insert>
+    <select id="selectAllProcess" resultMap="processMap">
+        SELECT
+        <include refid="processColumn"/>
+        FROM AP_STEP
+    </select>
 
 </mapper>
+

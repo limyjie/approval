@@ -45,4 +45,11 @@
                 #{apComment},
                 #{apDate})
     </insert>
+
+    <delete id="deleteStepStaffByProcessId" parameterType="String">
+        DELETE FROM AP_STEP_STAFF
+        WHERE HID = #{processId}
+    </delete>
+
+
 </mapper>

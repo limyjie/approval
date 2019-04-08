@@ -21,4 +21,6 @@ public interface AuditorDAO {
 
 
     Auditor selectAuditorById(String id);
+
+    String selectDepartmentNameById(String departmentId);
 }

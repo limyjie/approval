@@ -8,7 +8,15 @@ import java.util.List;
 
 public interface ProcessDAO {
 
+
+
     int insertProcess(Process process);
 
     List<Process> selectAllProcess();
+
+    int deleteProcessById(String id);
+
+    Process selectProcessById(String id);
+
+    int updateProcess(Process process);
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import sun.rmi.runtime.Log;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,5 +54,23 @@ public class ProcessController {
         return processService.getAll();
     }
 
+    @GetMapping("/get/{id}")
+    public ResponseUtil<Process> getProcess(@PathVariable("id")String processId) {
+
+        return processService.getProcess(processId);
+    }
+
+    @PostMapping("/remove/{id}")
+    public ResponseUtil<List<Process>> removeByProcessId(@PathVariable("id") String processId){
+        return processService.removeProcess(processId);
+    }
+
+    @PostMapping("/modify")
+    public ResponseUtil<Process> modifyProcess(@RequestBody Map<String, Object> map){
+        Process process = JSON.parseObject(JSON.toJSONString(map.get("process")), Process.class);
+        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(map.get("list")), ArrayList.class);
+
+        return processService.modifyProcess(process,arrayList);
+    }
 
 }

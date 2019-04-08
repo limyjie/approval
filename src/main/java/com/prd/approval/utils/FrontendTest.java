@@ -36,7 +36,6 @@ public class FrontendTest {
         map.put("queryString",request.getQueryString());
         //request header
         Enumeration<String> headerNames = request.getHeaderNames();
-
         while (headerNames.hasMoreElements()) {
             String nextElement = headerNames.nextElement();
             map.put(nextElement,request.getHeader(nextElement));

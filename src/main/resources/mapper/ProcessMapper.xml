@@ -50,5 +50,36 @@
         FROM AP_STEP
     </select>
 
+    <select id="selectProcessById" parameterType="String" resultMap="processMap">
+        SELECT
+        <include refid="processColumn"/>
+        FROM AP_STEP
+        WHERE IDNO = #{processId}
+    </select>
+
+    <delete id="deleteProcessById" parameterType="String">
+        DELETE
+        FROM AP_STEP
+        WHERE IDNO = #{id}
+    </delete>
+
+    <update id="updateProcess">
+        UPDATE AP_STEP
+        <set>
+            <if test="stepName!=null">
+                STEP_NAME = #{stepName},
+            </if>
+            <if test="stepDescription != null">
+                STEP_DESCRIPTION = #{stepDescription},
+            </if>
+            <if test="timesCount != null">
+                TIMES_COUNT = #{timesCount}
+            </if>
+            <if test="timesRemain != null">
+                timesRemain = #{timesRemain}
+            </if>
+        </set>
+        WHERE IDNO = #{id}
+    </update>
 </mapper>
 

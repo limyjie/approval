@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.TemplateDAO">
+
+
+    <insert id="insertTemplate">
+        INSERT INTO AP_EVENT (IDNO,
+                              IS_MODEL,
+                              MODEL_ID,
+                              EVENT_NAME,
+                              EVENT_DESCRIPTION,
+                              IS_ACTIVE,
+                              IS_UPDATE,
+                              STATUS,
+                              SORT_NO,
+                              CURRENT_STEP_ID,
+                              CURRENT_STEP_SORT_NO,
+                              BILL_NO,
+                              BILL_CODE,
+                              BILL_NAME,
+                              CREATOR_NO,
+                              CREATOR_NAME,
+                              CREATE_BY,
+                              CREATE_DATE)
+        VALUES (#{id},
+                #{isModel},
+                #{modelId},
+                #{eventName},
+                #{eventDescription},
+                #{isActive},
+                #{isUpdate},
+                #{status},
+                #{sortNo},
+                #{currentStepId},
+                #{currentStepSortNo},
+                #{billNo},
+                #{billCode},
+                #{billName},
+                #{creatorNo},
+                #{creatorName},
+                #{createBy},
+                #{createDate})
+    </insert>
+
+
+</mapper>

@@ -46,18 +46,21 @@ post
 
 # 审批模板
 
-## 获取模板表
-<localhost:9000/template/getAll>  
+## 获取所有模板表
+<http://139.199.126.58:9000/template/getAll> 
+
+## 获取所有激活状态的模板
+<http://139.199.126.58:9000/template/getAll/active>
 
 ## 获取改模板对应的审批阶段表
 
 ## 根据模板ID查看详情
 get  
-<localhost:9000/template/get/57039>
+<http://139.199.126.58:9000/template/get/57039>
 
 ## 添加模板
 post  
-<localhost:9000/template/add>
+<http://139.199.126.58:9000/template/add>
 ```json
 {
     "template":{
@@ -77,6 +80,6 @@ post
 
 ## 修改模板
 post  
-<localhost:9000/template/modify>
+<http://139.199.126.58:9000/template/modify>
 
 

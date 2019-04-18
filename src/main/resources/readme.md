@@ -76,10 +76,22 @@ post
 
 ## 删除模板
 post  
-<localhost:9000/template/remove/57294>
+<http://139.199.126.58:9000/template/remove/57294>
 
 ## 修改模板
 post  
 <http://139.199.126.58:9000/template/modify>
-
+```json
+{
+    "template":{
+    "id":"123",
+    "eventName":"eventName",
+    "isActive":"1",
+	"eventDescription":"eventDescription",
+	"createBy":"9999"
+    },
+    "originatorIdList":[4,5,6],//发起人ID
+    "processIdList":[1,2,3]//审批阶段ID
+}
+```
 

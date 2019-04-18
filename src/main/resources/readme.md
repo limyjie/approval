@@ -44,3 +44,39 @@ post
 post  
 <http://139.199.126.58:9000/process/remove/57199>
 
+# 审批模板
+
+## 获取模板表
+<localhost:9000/template/getAll>  
+
+## 获取改模板对应的审批阶段表
+
+## 根据模板ID查看详情
+get  
+<localhost:9000/template/get/57039>
+
+## 添加模板
+post  
+<localhost:9000/template/add>
+```json
+{
+    "template":{
+    	 "eventName":"eventName",
+    	 "isActive":"1",
+		 "eventDescription":"eventDescription",
+		 "createBy":"9999"
+    },
+    "originatorIdList":[4,5,6],//发起人ID
+    "processIdList":[1,2,3]//审批阶段ID
+}
+```
+
+## 删除模板
+post  
+<localhost:9000/template/remove/57294>
+
+## 修改模板
+post  
+<localhost:9000/template/modify>
+
+

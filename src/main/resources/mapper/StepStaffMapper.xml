@@ -7,7 +7,7 @@
         AP_RESULT,AP_COMMENT,AP_DATE
     </sql>
 
-    <resultMap id="stepStaffMap" type="com.prd.approval.entity.Auditor">
+    <resultMap id="stepStaffMap" type="com.prd.approval.entity.StepStaff">
         <id column="idno" property="id"/>
         <result column="hid" property="hId"/>
         <result column="status" property="status"/>
@@ -51,5 +51,10 @@
         WHERE HID = #{processId}
     </delete>
 
+    <select id="selectStepStaffsByProcessId" resultMap="stepStaffMap">
+        SELECT <include refid="stepStaffColumn"/>
+        FROM AP_STEP_STAFF
+        WHERE HID =#{processId}
+    </select>
 
 </mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.EventCreatorDAO">
+
+
+    <resultMap id="eventCreatorMap" type="com.prd.approval.entity.EventCreator">
+        <id column="idno" property="id" javaType="String" jdbcType="VARCHAR"/>
+        <result column="hid" property="hid"/>
+        <result column="sort_no" property="sortNo"/>
+        <result column="creator_no" property="creatorNo"/>
+        <result column="creator_name" property="creatorName"/>
+        <result column="creator_depa" property="creatorDepartment"/>
+        <result column="creator_depa_name" property="creatorDepartmentName"/>
+    </resultMap>
+
+    <!--批量插入  https://www.jb51.net/article/91345.htm ,主义mysql 和 Oracle 的语法区别-->
+    <insert id="insertEventCreator" parameterType="java.util.List" useGeneratedKeys="false">
+        INSERT INTO AP_EVENT_CREATOR (IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA,CREATOR_DEPA_NAME)
+        SELECT IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA,CREATOR_DEPA_NAME
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT
+            #{item.id} IDNO,#{item.hid} HID,#{item.sortNo} SORT_NO,
+            #{item.creatorNo} CREATOR_NO,#{item.creatorName} CREATOR_NAME,
+            #{item.creatorDepartment} CREATOR_DEPA,
+            FI023.DSCA CREATOR_DEPA_NAME
+            FROM dual,FI023
+            WHERE FI023.DEPA = #{item.creatorDepartment}
+        </foreach>
+
+        )
+
+    </insert>
+
+
+    <delete id="deleteEventCreatorByEventId" parameterType="String">
+        DELETE
+        FROM AP_EVENT_CREATOR
+        WHERE HID = #{eventId}
+    </delete>
+
+    <!--
+    INSERT INTO AP_EVENT_CREATOR (IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA, CREATOR_DEPA_NAME)
+        SELECT IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA, CREATOR_DEPA_NAME
+        FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT #{item.id},#{item.hid},#{item.sortNo},#{item.creatorNo},#{item.creatorName},
+            #{item.creatorDepartment}
+            FROM dual
+
+
+
+      INSERT INTO AP_EVENT_CREATOR
+        (IDNO,HID,SORT_NO,CREATOR_NO,CREATOR_NAME,CREATOR_DEPA,CREATOR_DEPA_NAME)
+        VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator="," >
+            (#{item.id},#{item.hid},#{item.sortNo},#{item.creatorNo},#{item.creatorName},
+            #{item.creatorDepartment},#{item.creatorDepartmentName})
+        </foreach>
+        -->
+</mapper>

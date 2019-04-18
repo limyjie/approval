@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.management.StringValueExp;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -73,13 +75,20 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public ResponseUtil<Process> getProcess(String processId) {
+    public ResponseUtil<Map<String,Object>> getProcess(String processId) {
 
         Process process = processDAO.selectProcessById(processId);
         if (process == null) {
             return new ResponseUtil<>(0, "审批阶段 " + processId + " 不存在");
         }
-        return new ResponseUtil<>(1, "审批阶段 " + processId + " 查询成功", process);
+        //该审批阶段的审核人
+        List<StepStaff> stepStaffList = stepStaffDAO.selectStepStaffsByProcessId(processId);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("process",process);
+        map.put("auditorList",stepStaffList);
+
+        return new ResponseUtil<>(1, "审批阶段 " + processId + " 查询成功", map);
     }
 
     @Override

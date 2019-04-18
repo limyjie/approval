@@ -4,11 +4,14 @@
  */
 package com.prd.approval.entity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
  *<p>
- *     ap_event
+ *     ap_event 审批模板 和审批事件 共用该表
  *</p>
  *
  */
@@ -16,9 +19,12 @@ public class Event {
     private String id;
     private Integer isModel;
     private String modelId;
-    private String eventName;
-    private String eventDescription;
-    private Integer isActive;
+    @NotBlank
+    private String eventName;//用户输入
+    @NotBlank
+    private String eventDescription;//用户输入
+    @NotNull
+    private Integer isActive;//用户输入
     private Integer isUpdate;
     private String status;
     private Integer sortNo;

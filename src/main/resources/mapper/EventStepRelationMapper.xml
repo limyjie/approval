@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.EventStepRelationDAO">
+
+
+    <resultMap id="eventCreatorMap" type="com.prd.approval.entity.EventCreator">
+        <id column="idno" property="id" javaType="String" jdbcType="VARCHAR"/>
+        <result column="event_idno" property="eventId"/>
+        <result column="step_idno" property="stepId"/>
+        <result column="sort_no" property="sortNo"/>
+        <result column="step_count" property="stepCount"/>
+    </resultMap>
+
+    <insert id="insertRelationList" parameterType="List" useGeneratedKeys="false">
+        INSERT INTO AP_EVENT_AP_STEP_RELATION
+        SELECT IDNO,EVENT_IDNO,STEP_IDNO,SORT_NO,STEP_COUNT
+        FROM(
+              <foreach collection="list" separator="UNION ALL" index="index" item="item">
+                  SELECT #{item.id} IDNO,#{item.eventId} EVENT_IDNO,
+                  #{item.stepId} STEP_IDNO,#{item.sortNo} SORT_NO,#{item.stepCount} STEP_COUNT
+                  FROM dual
+              </foreach>
+            )
+    </insert>
+
+    <delete id="deleteRelationByEventId" parameterType="String">
+        DELETE
+        FROM AP_EVENT_AP_STEP_RELATION
+        WHERE EVENT_IDNO = #{eventId}
+    </delete>
+
+</mapper>

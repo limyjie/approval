@@ -1,18 +1,15 @@
 响应
     1 正确 ，0 错误
 
+用户登录表: USERID  账号LOGINID 密码PASSWD
 
-
-登陆
-    表USERID
-    账号LOGINID
-    密码PASSWD
-
-
-审批人表： ap_step_staff
+审批人表： TCCOM001
 审批阶段表 ap_step
+审批人-审批阶段关系表 ap_step_staff
 
-
+审批模板/审批事件表 ap_event
+审批
+部门表 FI023
 
 -------------------------------------------------------------
 通用流程审批软件
@@ -61,6 +58,29 @@
 
 创建审批模板
 	模板名称 模板描述 创建人 创建日期 是否激活  审批发起人 单据类型（） 审批阶段
+
+	create table ap_event(
+    idno varchar2(20) primary key,主键
+    is_model number(5) default 0,0 = 事件，1 = 模板
+    model_id varchar2(20), 事件独有，记录它的复制来源的 ap_event.idno
+    event_name varchar2(40),名字
+    event_description varchar2(200),名字详细
+    is_active number(5) default 1, = 1 未启用状态，= 0 为不启用
+    is_update number(5) default 1, 修改更新字段，暂时闲置
+    status varchar2(10) default '1',事件独有，状态字段 =1 新建， = 3 通过审批， = 4 被拒绝， = 5 被中止
+    sort_no number(5),事件独有，顺序号，如果一个单据被多次提交审核，这里记录先后次序 1，2，3，4，5
+    current_step_id varchar2(20),事件独有，当前正在进行的阶段的 ap_step.idno
+    current_step_sort_no number,事件独有，当前正在进行的阶段的 ap_step.sort_no
+    bill_no varchar2(40),事件独有，目标单据的号码
+    bill_code varchar2(40),事件独有，目标单据的类型的代码
+    bill_name varchar2(40),事件独有，目标单据类型的名字
+    creator_no varchar2(20),事件独有，触发人
+    creator_name varchar2(40),事件独有，触发时间
+    create_by varchar2(20)，当前记录的创建人
+    create_date date
+    );
+
+
 
 审批
 	登陆后审批

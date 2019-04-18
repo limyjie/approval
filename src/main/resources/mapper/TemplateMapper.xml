@@ -2,6 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.prd.approval.dao.TemplateDAO">
 
+    <sql id="templateColumn">
+        idno,
+        is_model,
+        model_id,
+        event_name,
+        event_description,
+        is_active,
+        is_update,
+        status,
+        sort_no,
+        current_step_id,
+        current_step_sort_no,
+        bill_no,
+        bill_code,
+        bill_name,
+        creator_no,
+        creator_name,
+        create_by,
+        create_date
+    </sql>
+
+    <resultMap id="templateMap" type="com.prd.approval.entity.Event">
+        <id property="id" column="idno"/>
+        <result property="isModel" column="is_model"/>
+        <result property="modelId" column="model_id"/>
+        <result property="eventName" column="event_name"/>
+        <result property="eventDescription" column="event_description"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isUpdate" column="is_update"/>
+        <result property="status" column="status"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="currentStepId" column="current_step_id"/>
+        <result property="currentStepSortNo" column="current_step_sort_no"/>
+        <result property="billNo" column="bill_no"/>
+        <result property="billCode" column="bill_code"/>
+        <result property="billName" column="bill_name"/>
+        <result property="creatorNo" column="creator_no"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
 
     <insert id="insertTemplate">
         INSERT INTO AP_EVENT (IDNO,
@@ -42,5 +83,100 @@
                 #{createDate})
     </insert>
 
+    <select id="selectAllTemplates" resultMap="templateMap">
+        SELECT
+        <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IS_MODEL = '1'
+    </select>
+
+    <select id="selectActiveTemplates" resultMap="templateMap">
+        SELECT
+        <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IS_ACTIVE = '1' AND IS_MODEL = '1'
+    </select>
+
+
+    <select id="selectTemplateById" resultMap="templateMap">
+        SELECT
+        <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IDNO = #{id}
+    </select>
+
+    <delete id="deleteTemplateById">
+        DELETE
+        FROM AP_EVENT
+        WHERE IDNO = #{id}
+    </delete>
+
+    <update id="updateTemplate">
+        UPDATE AP_EVENT
+        <set>
+            <choose>
+                <when test="isModel != null">
+                    is_model=#{isModel}
+                </when>
+                <when test="modelId != null">
+                    model_id=#{modelId}
+                </when>
+                <when test="eventName != null">
+                    event_name=#{eventName}
+                </when>
+                <when test="eventDescription != null">
+                    event_description=#{eventDescription}
+                </when>
+                <when test="isActive != null">
+                    is_active=#{isActive}
+                </when>
+                <when test="isUpdate != null">
+                    is_update=#{isUpdate}
+                </when>
+                <when test="status != null">
+                    status=#{status}
+                </when>
+                <when test="sortNo != null">
+                    sort_no=#{sortNo}
+                </when>
+                <when test="currentStepId != null">
+                    current_step_id=#{currentStepId}
+                </when>
+                <when test="currentStepSortNo != null">
+                    current_step_sort_no=#{currentStepSortNo}
+                </when>
+                <when test="billNo != null">
+                    bill_no=#{billNo}
+                </when>
+                <when test="billCode != null">
+                    bill_code=#{billCode}
+                </when>
+                <when test="billName != null">
+                    bill_name=#{billName}
+                </when>
+                <when test="creatorNo != null">
+                    creator_no=#{creatorNo}
+                </when>
+                <when test="creatorName != null">
+                    creator_name=#{creatorName}
+                </when>
+            </choose>
+        </set>
+        WHERE IDNO = #{id}
+    </update>
+
+    <select id="selectTemplateByName" parameterType="String" resultType="String">
+        SELECT EVENT_NAME
+        FROM AP_EVENT
+        WHERE EVENT_NAME = #{templateName}
+          AND IS_MODEL = 1
+    </select>
+
+    <select id="selectActiveTemplateByBillCode" parameterType="String" resultMap="templateMap">
+        SELECT <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IDNO IN (SELECT hid FROM ap_event_bill WHERE BILL_CODE = #{billCode})
+          AND IS_ACTIVE = 1
+    </select>
 
 </mapper>

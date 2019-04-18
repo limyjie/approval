@@ -4,8 +4,11 @@
  */
 package com.prd.approval.dao;
 
+import com.prd.approval.entity.Auditor;
 import com.prd.approval.entity.StepStaff;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface StepStaffDAO {
 
@@ -15,4 +18,6 @@ public interface StepStaffDAO {
 
     int updateStepStaffByProcessId(@Param("processId")String processId,
                                    @Param("auditorId") String auditorId);
+
+    List<StepStaff> selectStepStaffsByProcessId(String processId);
 }

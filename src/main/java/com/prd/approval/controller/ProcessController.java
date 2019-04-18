@@ -55,7 +55,7 @@ public class ProcessController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseUtil<Process> getProcess(@PathVariable("id")String processId) {
+    public ResponseUtil<Map<String,Object>> getProcess(@PathVariable("id")String processId) {
 
         return processService.getProcess(processId);
     }

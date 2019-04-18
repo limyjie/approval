@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.EventBillDAO">
+
+    <resultMap id="eventBillMap" type="com.prd.approval.entity.EventBill">
+        <id column="idno" property="id"/>
+        <result column="hid" property="hid"/>
+        <result column="is_model" property="isModel"/>
+        <result column="bill_code" property="billCode"/>
+        <result column="bill_name" property="billName"/>
+        <result column="sort_no" property="sortNo"/>
+    </resultMap>
+
+    <insert id="insertEventBill" parameterType="com.prd.approval.entity.EventBill">
+        INSERT INTO AP_EVENT_BILL (IDNO, HID, IS_MODEL, BILL_CODE, BILL_NAME, SORT_NO)
+        VALUES (#{id}, #{hid}, #{isModel}, #{billCode}, #{billName}, #{sortNo})
+    </insert>
+
+    <select id="selectEventBillByBillCode" resultMap="eventBillMap">
+        SELECT IDNO, HID, IS_MODEL, BILL_CODE, BILL_NAME, SORT_NO
+        FROM AP_EVENT_BILL
+        WHERE BILL_CODE = #{billCode}
+    </select>
+
+    <delete id="deleteEventBillByEventId" parameterType="String">
+        DELETE
+        FROM AP_EVENT_BILL
+        WHERE HID = #{eventId}
+    </delete>
+</mapper>

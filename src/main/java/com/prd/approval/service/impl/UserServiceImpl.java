@@ -5,6 +5,7 @@
 package com.prd.approval.service.impl;
 
 
+import com.prd.approval.dao.TemplateDAO;
 import com.prd.approval.dao.UserDAO;
 import com.prd.approval.entity.User;
 import com.prd.approval.service.UserService;
@@ -21,6 +22,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private TemplateDAO templateDAO;
+
     @Override
     public ResponseUtil<User> login(User webUser) {
 
@@ -35,6 +39,13 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return new ResponseUtil<>(0, "账号或密码错误");
         }
+
+        /*
+        检查是否有待审核的事件
+
+         */
+
+
 
         return new ResponseUtil<>(1, "登陆成功",user);
 

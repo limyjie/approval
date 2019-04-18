@@ -8,11 +8,12 @@ import com.prd.approval.entity.Process;
 import com.prd.approval.utils.ResponseUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProcessService {
     ResponseUtil<Process> addProcess(Process process,List<Integer> auditorIdList);
 
-    ResponseUtil<Process> getProcess(String processId);
+    ResponseUtil<Map<String,Object>> getProcess(String processId);
 
     ResponseUtil<List<Process>> getAll();
 

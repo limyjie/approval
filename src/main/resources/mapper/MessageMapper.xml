@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.MessageDAO">
+
+    <sql id="messageColumn">
+        IDNO, FROMUSER, TOUSER, SERA, SUBJECT, CONTENT, SENDTIME, HAVEREAD,
+        HAVEALERT, HAVEDONE, MESSAGE_TYPE
+    </sql>
+
+    <resultMap id="messageMap" type="com.prd.approval.entity.Message">
+        <id column="IDNO" property="id"/>
+        <result column="FROMUSER" property="fromUser"/>
+        <result column="TOUSER" property="toUser"/>
+        <result column="SERA" property="sera"/>
+        <result column="SUBJECT" property="subject"/>
+        <result column="CONTENT" property="content"/>
+        <result column="SENDTIME" property="sendTime"/>
+        <result column="HAVEREAD" property="haveRead"/>
+        <result column="HAVEALERT" property="haveAlert"/>
+        <result column="HAVEDONE" property="haveDone"/>
+        <result column="MESSAGE_TYPE" property="messageType"/>
+
+
+    </resultMap>
+
+    <select id="selectAllApprovalMessage" resultMap="messageMap">
+        SELECT <include refid="messageColumn"/>
+        FROM MESSAGE
+        WHERE MESSAGE_TYPE = 'ap'
+    </select>
+
+</mapper>

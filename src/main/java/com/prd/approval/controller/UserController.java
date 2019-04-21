@@ -5,6 +5,7 @@
 package com.prd.approval.controller;
 
 
+import com.prd.approval.entity.Message;
 import com.prd.approval.entity.User;
 import com.prd.approval.service.UserService;
 import com.prd.approval.utils.ResponseUtil;
@@ -32,8 +33,12 @@ public class UserController {
         return userService.login(webUser);
     }
 
-    @GetMapping("/getAll")
-    public ResponseUtil<List<User>> getAll(){
-        return userService.findAllUser();
+
+    @GetMapping("/getApMessage")
+    public ResponseUtil<List<Message>> getMessage(){
+        return userService.getMessage();
     }
+
+
+
 }

@@ -67,6 +67,7 @@ public class TemplateServiceImpl implements TemplateService {
         //防止重复插入
         if (templateDAO.selectTemplateByName(event.getId(),event.getEventName()) != null) {
             return new ResponseUtil<>(0, "重复的审批模板名");
+
         }
 
         //服务器端自动填入的数据

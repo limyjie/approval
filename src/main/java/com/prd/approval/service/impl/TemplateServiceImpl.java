@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p></p>
@@ -63,7 +65,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 
         //防止重复插入
-        if (templateDAO.selectTemplateByName(event.getEventName()) != null) {
+        if (templateDAO.selectTemplateByName(event.getId(),event.getEventName()) != null) {
             return new ResponseUtil<>(0, "重复的审批模板名");
         }
 
@@ -160,16 +162,24 @@ public class TemplateServiceImpl implements TemplateService {
         return new ResponseUtil<>(1, "获取所有审批模板成功", eventList);
     }
 
+
     @Override
-    public ResponseUtil<Event> findTemplate(String templateId) {
+    public ResponseUtil<Map<String,Object>> findTemplate(String templateId) {
         if (templateId == null || templateId.trim().isEmpty()) {
             return new ResponseUtil<>(0, "审批模板编码不能为空");
         }
         Event event = templateDAO.selectTemplateById(templateId);
+        List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(templateId);
+        List<Process> processList = processDAO.selectProcessBelongTemplate(templateId);
+        Map<String,Object> map = new HashMap<>();
+        map.put("template",event);
+        map.put("originatorList",eventCreatorList);
+        map.put("processList",processList);
+
         if (event == null) {
             return new ResponseUtil<>(1, "该审批模板不存在");
         }
-        return new ResponseUtil<>(1, "审批模板获取成功", event);
+        return new ResponseUtil<>(1, "审批模板获取成功", map);
     }
 
     @Transactional
@@ -183,10 +193,18 @@ public class TemplateServiceImpl implements TemplateService {
         if (event.getId() == null || event.getId().trim().isEmpty()) {
             return new ResponseUtil<>(0, "审批模板编码不能为空");
         }
+        //模板名不能一样
+        //防止重复插入
+        if (templateDAO.selectTemplateByName(event.getId(),event.getEventName()) != null) {
+            return new ResponseUtil<>(0, "重复的审批模板名");
+        }
+
         int result = templateDAO.updateTemplate(event);
         if (result == 0) {
             return new ResponseUtil<>(0, "不存在编码为 " + event.getId() + " 的审批模板");
         }
+
+
 
         // 修改发起人:先删除，后插入，不使用UPDATE语句是因为修改前后的发起人数可能不一样
         List<EventCreator> eventCreatorList = new ArrayList<>();

@@ -68,7 +68,7 @@ public class TemplateController {
 
 
     @GetMapping("/get/{id}")
-    public ResponseUtil<Event> findTemplate(@PathVariable("id") String templateId) {
+    public ResponseUtil<Map<String,Object>> findTemplate(@PathVariable("id") String templateId) {
         return templateService.findTemplate(templateId);
     }
 

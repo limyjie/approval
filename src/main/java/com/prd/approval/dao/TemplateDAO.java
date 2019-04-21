@@ -1,6 +1,7 @@
 package com.prd.approval.dao;
 
 import com.prd.approval.entity.Event;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,7 +23,15 @@ public interface TemplateDAO {
 
     int updateTemplate(Event event);
 
-    String selectTemplateByName(String templateName);
+    /**
+     * <p>
+     *  用于修改模板
+     *  检查是否除 ID 为 templateId 外 有重复的模板名
+     * </p>
+     * @param templateName
+     * @return
+     */
+    String selectTemplateByName(@Param("templateId") String templateId,@Param("templateName") String templateName);
 
     Event selectActiveTemplateByBillCode(String billCode);
 }

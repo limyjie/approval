@@ -165,18 +165,24 @@
         WHERE IDNO = #{id}
     </update>
 
-    <select id="selectTemplateByName" parameterType="String" resultType="String">
+    <select id="selectTemplateByName" resultType="String">
         SELECT EVENT_NAME
         FROM AP_EVENT
         WHERE EVENT_NAME = #{templateName}
           AND IS_MODEL = 1
+          AND IDNO NOT IN(
+                SELECT #{templateId}
+                FROM dual
+                )
+
     </select>
 
     <select id="selectActiveTemplateByBillCode" parameterType="String" resultMap="templateMap">
-        SELECT <include refid="templateColumn"/>
+        SELECT
+        <include refid="templateColumn"/>
         FROM AP_EVENT
         WHERE IDNO IN (SELECT hid FROM ap_event_bill WHERE BILL_CODE = #{billCode})
-          AND IS_ACTIVE = 1
+        AND IS_ACTIVE = 1
     </select>
 
 </mapper>

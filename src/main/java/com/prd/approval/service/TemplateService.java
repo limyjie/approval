@@ -8,6 +8,7 @@ import com.prd.approval.entity.Event;
 import com.prd.approval.utils.ResponseUtil;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *<p>
@@ -25,7 +26,7 @@ public interface TemplateService {
 
     ResponseUtil<List<Event>> findAllTemplate();
 
-    ResponseUtil<Event> findTemplate(String templateId);
+    ResponseUtil<Map<String,Object>> findTemplate(String templateId);
 
     ResponseUtil<Event> modifyTemplate(Event event,List<String> originatorIdList,List<String> processIdList);
 

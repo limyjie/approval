@@ -81,5 +81,17 @@
         </set>
         WHERE IDNO = #{id}
     </update>
+
+    <select id="selectProcessBelongTemplate" parameterType="String" resultMap="processMap">
+        SELECT
+        <include refid="processColumn"/>
+        FROM AP_STEP
+        WHERE IDNO
+        IN(
+        SELECT STEP_IDNO
+        FROM AP_EVENT_AP_STEP_RELATION
+        WHERE EVENT_IDNO = #{templateId}
+        )
+    </select>
 </mapper>
 

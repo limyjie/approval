@@ -19,4 +19,6 @@ public interface ProcessDAO {
     Process selectProcessById(String id);
 
     int updateProcess(Process process);
+
+    List<Process> selectProcessBelongTemplate(String templateId);
 }

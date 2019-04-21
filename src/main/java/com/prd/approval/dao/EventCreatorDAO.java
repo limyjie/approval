@@ -18,5 +18,7 @@ public interface EventCreatorDAO {
 
     int deleteEventCreatorByEventId(String eventId);
 
+    List<EventCreator> selectEventCreatorByTemplateId(String templateId);
+
 
 }

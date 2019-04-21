@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.prd.approval.dao.EventCreatorDAO">
 
+    <sql id="eventCreatorColumn">
+        IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA, CREATOR_DEPA_NAME
+    </sql>
 
     <resultMap id="eventCreatorMap" type="com.prd.approval.entity.EventCreator">
         <id column="idno" property="id" javaType="String" jdbcType="VARCHAR"/>
@@ -38,6 +41,13 @@
         FROM AP_EVENT_CREATOR
         WHERE HID = #{eventId}
     </delete>
+
+    <select id="selectEventCreatorByTemplateId" parameterType="String" resultMap="eventCreatorMap">
+        SELECT
+        <include refid="eventCreatorColumn"/>
+        FROM AP_EVENT_CREATOR
+        WHERE HID =#{templateId}
+    </select>
 
     <!--
     INSERT INTO AP_EVENT_CREATOR (IDNO, HID, SORT_NO, CREATOR_NO, CREATOR_NAME, CREATOR_DEPA, CREATOR_DEPA_NAME)

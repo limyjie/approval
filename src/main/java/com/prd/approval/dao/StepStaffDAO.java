@@ -16,8 +16,7 @@ public interface StepStaffDAO {
 
     int deleteStepStaffByProcessId(String processId);
 
-    int updateStepStaffByProcessId(@Param("processId")String processId,
-                                   @Param("auditorId") String auditorId);
-
     List<StepStaff> selectStepStaffsByProcessId(String processId);
+
+    List<StepStaff> whetherHaveNewEventToDo(String staffId);
 }

@@ -48,16 +48,27 @@ public class ProcessServiceImpl implements ProcessService {
      * @param auditorIdList
      * @return
      */
-    public ResponseUtil<Process> addProcess(Process process, List<Integer> auditorIdList) {
+
+    @Transactional
+    public ResponseUtil<Process> addProcess(Process process,
+                                            List<Integer> auditorIdList) {
+
         if (auditorIdList.size() < process.getTimesCount()) {
             return new ResponseUtil<>(0, "审核人数应大于等于通过次数");
+        }
+
+        // 阶段名不能重复
+        Process p = processDAO.selectProcessByName(process.getStepName());
+        if(p != null){
+            return new ResponseUtil<>(0,"阶段名 "+process.getStepName()+" 已存在");
         }
         process.setId(IDNOUtil.getIDNO());
         /*status 1=新建，2=正在执行(开启),3=通过，4 = 被拒绝*/
         process.setStatus("1");
         process.setStepCount(process.getStepCount());
         process.setStepName(process.getStepName());
-        process.setStepType(2);
+        process.setStepType(0);
+        process.setStepCode(IDNOUtil.getIDNO());
         process.setStepDescription(process.getStepDescription());
         process.setTimesCount(process.getTimesCount());
         process.setTimesRemain(process.getTimesCount());
@@ -174,7 +185,9 @@ public class ProcessServiceImpl implements ProcessService {
 
     private ResponseUtil<Process> addStepStaffListByAuditorId(String processId, List<Integer> auditorIdList) {
         StepStaff stepStaff = new StepStaff();
-        for (Integer id : auditorIdList) {
+        for(int i = 0;i<auditorIdList.size();i++){
+
+            int id = auditorIdList.get(i);
             Auditor auditor = auditorDAO.selectAuditorById(String.valueOf(id));
             if (auditor == null) {
                 return new ResponseUtil<>(1, "找不到编号为" + id + "的审核人");
@@ -182,7 +195,8 @@ public class ProcessServiceImpl implements ProcessService {
             stepStaff.setId(IDNOUtil.getIDNO());
             stepStaff.sethId(processId);
             stepStaff.setStatus("1");
-            //sort_no number(5),排序号
+
+            stepStaff.setSortNo(i+1);
             stepStaff.setStaffNo(String.valueOf(id));
             stepStaff.setStaffName(auditor.getName());
             stepStaff.setApResult("1");

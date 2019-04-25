@@ -24,9 +24,34 @@
     </resultMap>
 
     <select id="selectAllApprovalMessage" resultMap="messageMap">
-        SELECT <include refid="messageColumn"/>
+        SELECT
+        <include refid="messageColumn"/>
         FROM MESSAGE
         WHERE MESSAGE_TYPE = 'ap'
     </select>
+
+    <!--SERA : toUser 收到的消息的序列号 每次在最大值的基础上加一
+    NVL(expr1,expr2) :  expr1 == null ? expr2 : expr1
+    -->
+    <insert id="insertMessage">
+        INSERT INTO MESSAGE (IDNO,
+                             FROMUSER,
+                             TOUSER,
+                             SERA,
+                             SUBJECT,
+                             CONTENT,
+                             SENDTIME,
+                             HAVEREAD,
+                             HAVEALERT,
+                             HAVEDONE,
+                             MESSAGE_TYPE)
+
+        SELECT #{id} IDNO,#{fromUser} FROMUSER,#{toUser} TOUSER,NVL(MAX(SERA)+1,1)  SERA,
+               #{subject} SUBJECT,#{content} CONTENT,#{sendTime} SENDTIME,
+               #{haveRead} HAVEREAD, #{haveAlert} HAVEALERT, #{haveDone} HAVEDONE,
+               #{messageType} MESSAGE_TYPE
+        FROM MESSAGE
+        WHERE TOUSER = #{toUser}
+    </insert>
 
 </mapper>

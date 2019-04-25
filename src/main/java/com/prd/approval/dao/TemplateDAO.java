@@ -31,7 +31,12 @@ public interface TemplateDAO {
      * @param templateName
      * @return
      */
-    String selectTemplateByName(@Param("templateId") String templateId,@Param("templateName") String templateName);
+    String selectTemplateByNameAndID(@Param("templateId") String templateId,@Param("templateName") String templateName);
+
+
+    String selectTemplateByName(String name);
 
     Event selectActiveTemplateByBillCode(String billCode);
+
+
 }

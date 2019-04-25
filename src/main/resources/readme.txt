@@ -27,61 +27,9 @@
      批准人列表（批准人 | 部门 ）的获取：从TCCOM001 中获取
      TCCOM001.depa = FI023.depa
 
-    应当向数据库添加的数据：
-    AP_STEP:
-        idno varchar2(20) primary key,
-        event_id varchar2(20),ap_event.idno   ??
-        sort_no number(5),次序号，事件见按此顺序执行阶段，线性  ??
-        step_count number(5),当前事件总共的阶段数
-        source_step_id varchar2(20),当前记录的复制来源 ap_step.idno  ??
-        step_code varchar2(20),阶段代码，若是独立阶段(及不依附于实例事件)，那么必须唯一  ??
-        step_type number(5) default 2, 类型，1 = 事件阶段，2 = 模板(独立)阶段
-        step_name varchar2(40),名
-        step_description varchar2(200),名
-        times_count number(5),通过当前阶段需要的通过次数
-        status varchar2(10),1=新建，2=  正在执行(开启),3= 通过，4 = 被拒绝
-        times_remain number(5),仍需要的通过次数(此数值会随着每个审批人的审批通过而变化，初始值 = times_count )
-        create_by varchar2(20),记录创建人
-        create_date date
-        );
-    AP_STEP_STAFF:
-        idno varchar2(20) primary key,
-        hid varchar2(20), ap_step.idno
-        status varchar2(10) default '1',  1 = 未执行，2 = 已执行(通过或拒绝)
-        sort_no number(5),排序号   ??
-        staff_no varchar2(20),审批人编码 tccom001.emno
-        staff_name varchar2(40),tccom001.nama
-        staff_depa varchar2(20),部门信息，暂时闲置
-        staff_depa_name varchar2(20),
-        ap_result varchar(10) default '1',审批结果 1 = 未审批， 3 = 审批通过， 4 = 拒绝
-        ap_comment varchar(200),审批备注
-        ap_date date审批时间
-
 
 创建审批模板
-	模板名称 模板描述 创建人 创建日期 是否激活  审批发起人 单据类型（） 审批阶段
-
-	create table ap_event(
-    idno varchar2(20) primary key,主键
-    is_model number(5) default 0,0 = 事件，1 = 模板
-    model_id varchar2(20), 事件独有，记录它的复制来源的 ap_event.idno
-    event_name varchar2(40),名字
-    event_description varchar2(200),名字详细
-    is_active number(5) default 1, = 1 未启用状态，= 0 为不启用
-    is_update number(5) default 1, 修改更新字段，暂时闲置
-    status varchar2(10) default '1',事件独有，状态字段 =1 新建， = 3 通过审批， = 4 被拒绝， = 5 被中止
-    sort_no number(5),事件独有，顺序号，如果一个单据被多次提交审核，这里记录先后次序 1，2，3，4，5
-    current_step_id varchar2(20),事件独有，当前正在进行的阶段的 ap_step.idno
-    current_step_sort_no number,事件独有，当前正在进行的阶段的 ap_step.sort_no
-    bill_no varchar2(40),事件独有，目标单据的号码
-    bill_code varchar2(40),事件独有，目标单据的类型的代码
-    bill_name varchar2(40),事件独有，目标单据类型的名字
-    creator_no varchar2(20),事件独有，触发人
-    creator_name varchar2(40),事件独有，触发时间
-    create_by varchar2(20)，当前记录的创建人
-    create_date date
-    );
-
+	模板名称 模板描述 创建人 创建日期 是否激活  审批发起人(不同于阶段的审核人) 单据类型（） 审批阶段
 
 
 审批

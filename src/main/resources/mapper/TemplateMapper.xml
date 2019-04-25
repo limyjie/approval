@@ -114,68 +114,69 @@
     <update id="updateTemplate">
         UPDATE AP_EVENT
         <set>
-            <choose>
-                <when test="isModel != null">
-                    is_model=#{isModel}
-                </when>
-                <when test="modelId != null">
-                    model_id=#{modelId}
-                </when>
-                <when test="eventName != null">
-                    event_name=#{eventName}
-                </when>
-                <when test="eventDescription != null">
-                    event_description=#{eventDescription}
-                </when>
-                <when test="isActive != null">
-                    is_active=#{isActive}
-                </when>
-                <when test="isUpdate != null">
-                    is_update=#{isUpdate}
-                </when>
-                <when test="status != null">
-                    status=#{status}
-                </when>
-                <when test="sortNo != null">
-                    sort_no=#{sortNo}
-                </when>
-                <when test="currentStepId != null">
-                    current_step_id=#{currentStepId}
-                </when>
-                <when test="currentStepSortNo != null">
-                    current_step_sort_no=#{currentStepSortNo}
-                </when>
-                <when test="billNo != null">
-                    bill_no=#{billNo}
-                </when>
-                <when test="billCode != null">
-                    bill_code=#{billCode}
-                </when>
-                <when test="billName != null">
-                    bill_name=#{billName}
-                </when>
-                <when test="creatorNo != null">
-                    creator_no=#{creatorNo}
-                </when>
-                <when test="creatorName != null">
-                    creator_name=#{creatorName}
-                </when>
-            </choose>
+            <if test="isModel != null">
+                is_model=#{isModel},
+            </if>
+            <if test="modelId != null">
+                model_id=#{modelId},
+            </if>
+            <if test="eventName != null">
+                event_name=#{eventName},
+            </if>
+            <if test="eventDescription != null">
+                event_description=#{eventDescription},
+            </if>
+            <if test="isActive != null">
+                is_active=#{isActive},
+            </if>
+            <if test="isUpdate != null">
+                is_update=#{isUpdate},
+            </if>
+            <if test="status != null">
+                status=#{status},
+            </if>
+            <if test="sortNo != null">
+                sort_no=#{sortNo},
+            </if>
+            <if test="currentStepId != null">
+                current_step_id=#{currentStepId},
+            </if>
+            <if test="currentStepSortNo != null">
+                current_step_sort_no=#{currentStepSortNo},
+            </if>
+            <if test="billNo != null">
+                bill_no=#{billNo},
+            </if>
+            <if test="billCode != null">
+                bill_code=#{billCode},
+            </if>
+            <if test="billName != null">
+                bill_name=#{billName},
+            </if>
+            <if test="creatorNo != null">
+                creator_no=#{creatorNo},
+            </if>
+            <if test="creatorName != null">
+                creator_name=#{creatorName},
+            </if>
         </set>
         WHERE IDNO = #{id}
     </update>
+
+    <select id="selectTemplateByNameAndID" resultType="String">
+        SELECT EVENT_NAME
+        FROM AP_EVENT
+        WHERE EVENT_NAME = #{templateName}
+          AND IS_MODEL = 1
+          AND IDNO NOT IN(SELECT #{templateId} FROM dual)
+    </select>
 
     <select id="selectTemplateByName" resultType="String">
         SELECT EVENT_NAME
         FROM AP_EVENT
         WHERE EVENT_NAME = #{templateName}
-          AND IS_MODEL = 1
-          AND IDNO NOT IN(
-                SELECT #{templateId}
-                FROM dual
-                )
-
     </select>
+
 
     <select id="selectActiveTemplateByBillCode" parameterType="String" resultMap="templateMap">
         SELECT
@@ -184,5 +185,6 @@
         WHERE IDNO IN (SELECT hid FROM ap_event_bill WHERE BILL_CODE = #{billCode})
         AND IS_ACTIVE = 1
     </select>
+
 
 </mapper>

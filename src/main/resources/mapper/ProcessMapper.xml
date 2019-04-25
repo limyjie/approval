@@ -73,10 +73,13 @@
                 STEP_DESCRIPTION = #{stepDescription},
             </if>
             <if test="timesCount != null">
-                TIMES_COUNT = #{timesCount}
+                TIMES_COUNT = #{timesCount},
             </if>
             <if test="timesRemain != null">
-                timesRemain = #{timesRemain}
+                TIMES_REMAIN = #{timesRemain},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
             </if>
         </set>
         WHERE IDNO = #{id}
@@ -92,6 +95,20 @@
         FROM AP_EVENT_AP_STEP_RELATION
         WHERE EVENT_IDNO = #{templateId}
         )
+    </select>
+
+    <select id="selectNextProcess" parameterType="com.prd.approval.entity.Process"
+            resultMap="processMap">
+        SELECT <include refid="processColumn"/>
+        FROM AP_STEP
+        WHERE EVENT_ID = #{eventId}
+          AND SORT_NO = #{sortNo}+1
+    </select>
+
+    <select id="selectProcessByName" parameterType="String" resultMap="processMap">
+        SELECT <include refid="processColumn"/>
+        FROM AP_STEP
+        WHERE STEP_NAME = #{stepName}
     </select>
 </mapper>
 

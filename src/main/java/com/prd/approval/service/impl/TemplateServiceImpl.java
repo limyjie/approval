@@ -65,7 +65,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 
         //防止重复插入
-        if (templateDAO.selectTemplateByName(event.getId(),event.getEventName()) != null) {
+        if (templateDAO.selectTemplateByName(event.getEventName()) != null) {
             return new ResponseUtil<>(0, "重复的审批模板名");
 
         }
@@ -196,7 +196,7 @@ public class TemplateServiceImpl implements TemplateService {
         }
         //模板名不能一样
         //防止重复插入
-        if (templateDAO.selectTemplateByName(event.getId(),event.getEventName()) != null) {
+        if (templateDAO.selectTemplateByNameAndID(event.getId(),event.getEventName()) != null) {
             return new ResponseUtil<>(0, "重复的审批模板名");
         }
 
@@ -204,8 +204,6 @@ public class TemplateServiceImpl implements TemplateService {
         if (result == 0) {
             return new ResponseUtil<>(0, "不存在编码为 " + event.getId() + " 的审批模板");
         }
-
-
 
         // 修改发起人:先删除，后插入，不使用UPDATE语句是因为修改前后的发起人数可能不一样
         List<EventCreator> eventCreatorList = new ArrayList<>();

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProcessDAO {
 
-
+    Process selectProcessByName(String name);
 
     int insertProcess(Process process);
 
@@ -21,4 +21,6 @@ public interface ProcessDAO {
     int updateProcess(Process process);
 
     List<Process> selectProcessBelongTemplate(String templateId);
+
+    Process selectNextProcess(Process currentProcess);
 }

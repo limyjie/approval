@@ -13,4 +13,6 @@ public interface MessageDAO {
      */
     List<Message> selectAllApprovalMessage();
 
+    int insertMessage(Message message);
+
 }

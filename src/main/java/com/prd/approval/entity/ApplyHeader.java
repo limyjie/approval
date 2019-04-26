@@ -5,9 +5,12 @@
 package com.prd.approval.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
- *<p></p>
+ *<p>
+ *     apply header : apply list = 1:n
+ *</p>
  *
  */
 public class ApplyHeader {
@@ -27,6 +30,7 @@ public class ApplyHeader {
     private String preIssueBy;
     private String comments;
     private Timestamp expirationDate;
+    private List<ApplyList> applyListList;
 
     public ApplyHeader() {
     }
@@ -49,7 +53,16 @@ public class ApplyHeader {
                 ", preIssueBy='" + preIssueBy + '\'' +
                 ", comments='" + comments + '\'' +
                 ", expirationDate=" + expirationDate +
+                ", applyListList=" + applyListList +
                 '}';
+    }
+
+    public List<ApplyList> getApplyListList() {
+        return applyListList;
+    }
+
+    public void setApplyListList(List<ApplyList> applyListList) {
+        this.applyListList = applyListList;
     }
 
     public String getId() {

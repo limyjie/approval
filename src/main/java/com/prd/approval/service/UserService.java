@@ -1,6 +1,7 @@
 package com.prd.approval.service;
 
 
+import com.prd.approval.entity.ApplyHeader;
 import com.prd.approval.entity.Event;
 import com.prd.approval.entity.Message;
 import com.prd.approval.entity.User;
@@ -23,5 +24,5 @@ public interface UserService {
 
     ResponseUtil<Event> doApproval(String eventId,String result,String remarks);
 
-    ResponseUtil<Map<String,Object>> getTargetBill(String id);
+    ResponseUtil<ApplyHeader> getTargetBill(String id);
 }

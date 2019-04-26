@@ -6,10 +6,8 @@ package com.prd.approval.service.impl;
 
 
 import com.prd.approval.dao.*;
-import com.prd.approval.entity.Event;
-import com.prd.approval.entity.Message;
+import com.prd.approval.entity.*;
 import com.prd.approval.entity.Process;
-import com.prd.approval.entity.User;
 import com.prd.approval.service.UserService;
 import com.prd.approval.utils.IDNOUtil;
 import com.prd.approval.utils.ResponseUtil;
@@ -41,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StepStaffDAO stepStaffDAO;
+
+    @Autowired
+    private ApplyHeaderDAO applyHeaderDAO;
 
     @Override
     public ResponseUtil<User> login(User webUser) {
@@ -188,11 +189,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseUtil<Map<String, Object>> getTargetBill(String id) {
+    public ResponseUtil<ApplyHeader> getTargetBill(String applyNo) {
 
+        ApplyHeader applyHeader = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
 
+        if(applyHeader != null){
+            return new ResponseUtil<>(1,"目标单据类型查询成功",applyHeader);
+        }
+        return new ResponseUtil<>(0,"目标单据类型查询结果为空");
 
-        return null;
     }
 
 }

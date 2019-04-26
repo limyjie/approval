@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.ApplyHeaderDAO">
+
+    <sql id="applyHeaderColumn">
+       IDNO,
+        APPLY_NO,
+        APPLY_NAME,
+        STATUS,
+        APPLY_TYPE,
+        PROJECT_NO,
+        APPLY_BY,
+        APPLY_DEPA ,
+        PLAN_DATE,
+        CREATE_DATE,
+        CREATE_BY,
+        PRE_ISSUE_DATE,
+        PRE_ISSUE_BY,
+        COMMENTS,
+        EXPIRATION_DATE
+    </sql>
+
+
+
+    <resultMap id="applyHeaderMap" type="com.prd.approval.entity.ApplyHeader">
+        <id column="IDNO" property="id"/>
+        <result column="APPLY_NO" property="applyNo"/>
+        <result column="APPLY_NAME" property="applyName"/>
+        <result column="STATUS" property="status"/>
+        <result column="APPLY_TYPE" property="applyType"/>
+        <result column="PROJECT_NO" property="projectNo"/>
+        <result column="APPLY_BY" property="applyBy"/>
+        <result column="APPLY_DEPA" property="applyDepartment"/>
+        <result column="PLAN_DATE" property="planDate"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="PRE_ISSUE_DATE" property="preIssueDate"/>
+        <result column="PRE_ISSUE_BY" property="preIssueBy"/>
+        <result column="COMMENTS" property="comments"/>
+        <result column="EXPIRATION_DATE" property="expirationDate"/>
+        <!--
+        column:The column name from the database, or the aliased column label that holds the value that will be passed to the nested statement as an input parameter.
+        -->
+        <collection property="applyListList"
+                    column="APPLY_NO"
+                    javaType="ArrayList"
+                    select="com.prd.approval.dao.ApplyListDAO.selectApplyListByHID"/>
+    </resultMap>
+
+
+    <select id="selectApplyHeaderByApplyNo" parameterType="String" resultMap="applyHeaderMap">
+        SELECT <include refid="applyHeaderColumn"/>
+        FROM PUR_APPLY_HEAD
+        WHERE APPLY_NO = #{id}
+    </select>
+
+</mapper>

@@ -16,6 +16,16 @@ public class ApplyList {
     private String hid;
     private String applyNo;
     private String listType;
+    private String listStatus;
+
+    public String getListStatus() {
+        return listStatus;
+    }
+
+    public void setListStatus(String listStatus) {
+        this.listStatus = listStatus;
+    }
+
     private Integer sortNo;
     private String  purchaseStaff;
     private Timestamp planDate;
@@ -365,6 +375,7 @@ public class ApplyList {
                 ", hid='" + hid + '\'' +
                 ", applyNo='" + applyNo + '\'' +
                 ", listType='" + listType + '\'' +
+                ", listStatus='" + listStatus + '\'' +
                 ", sortNo=" + sortNo +
                 ", purchaseStaff='" + purchaseStaff + '\'' +
                 ", planDate=" + planDate +

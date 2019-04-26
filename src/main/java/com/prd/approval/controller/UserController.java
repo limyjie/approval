@@ -5,6 +5,7 @@
 package com.prd.approval.controller;
 
 
+import com.prd.approval.entity.ApplyHeader;
 import com.prd.approval.entity.Event;
 import com.prd.approval.entity.Message;
 import com.prd.approval.entity.User;
@@ -72,7 +73,7 @@ public class UserController {
     }
 
     @GetMapping("/getTargetBill/{id}")
-    public ResponseUtil<Map<String,Object>> getTargetBill(@PathVariable("id")String id ){
+    public ResponseUtil<ApplyHeader> getTargetBill(@PathVariable("id")String id ){
         return userService.getTargetBill(id);
     }
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prd.approval.dao.ApplyListDAO">
+
+
+
+    <sql id="applyListColumn">
+        IDNO,
+        HID,
+        APPLY_NO,
+        LIST_TYPE,
+        LIST_STATUS,
+        SORT_NO,
+        PURCHASE_STAFF,
+        PLAN_DATE,
+        PROJECT_NO,
+        ITEM,
+        ITEM_CCGG,
+        QUANTITY,
+        UNIT,
+        UNIT_TYPE,
+        INV_QUANTITY,
+        INV_UNIT,
+        CONVERSION_RATE,
+        WH_ID,
+        COPR,
+        AMOUNT,
+        TAX_NO,
+        TAX_RATE,
+        TAX_AMOUNT,
+        AMOUNT_WITH_TAX,
+        SUNO,
+        IS_TRANSFER_NOT_INCLUDED,
+        FINANCE_ISSUE_STATUS,
+        REASON_FOR_REJECT,
+        ISSUE_BY,
+        ISSUE_DATE,
+        SUBMIT_BY,
+        SUBMIT_DATE,
+        CREATE_BY,
+        CREATE_DATE,
+        COMMENTS,
+        ATTRIBUTE1,
+        ATTRIBUTE2,
+        ATTRIBUTE3,
+        KLTC
+    </sql>
+
+
+    <resultMap id="applyListMap" type="com.prd.approval.entity.ApplyList">
+        <id column="IDNO" property="id"/>
+        <result column="HID" property="hid"/>
+        <result column="APPLY_NO" property="applyNo"/>
+        <result column="LIST_TYPE" property="listType"/>
+        <result column="LIST_STATUS" property="listStatus"/>
+        <result column="SORT_NO" property="sortNo"/>
+        <result column="PURCHASE_STAFF" property="purchaseStaff"/>
+        <result column="PLAN_DATE" property="planDate"/>
+        <result column="PROJECT_NO" property="projectNo"/>
+        <result column="ITEM" property="item"/>
+        <result column="ITEM_CCGG" property="itemCCGG"/>
+        <result column="QUANTITY" property="quantity"/>
+        <result column="UNIT" property="unit"/>
+        <result column="UNIT_TYPE" property="unitType"/>
+        <result column="INV_QUANTITY" property="invQuantity"/>
+        <result column="INV_UNIT" property="invUnit"/>
+        <result column="CONVERSION_RATE" property="conversionRate"/>
+        <result column="WH_ID" property="whID"/>
+        <result column="COPR" property="copr"/>
+        <result column="AMOUNT" property="amount"/>
+        <result column="TAX_NO" property="taxNo"/>
+        <result column="TAX_RATE" property="taxRate"/>
+        <result column="TAX_AMOUNT" property="taxAmount"/>
+        <result column="AMOUNT_WITH_TAX" property="amountWithTax"/>
+        <result column="SUNO" property="suNo"/>
+        <result column="IS_TRANSFER_NOT_INCLUDED" property="isTransferNotIncluded"/>
+        <result column="FINANCE_ISSUE_STATUS" property="financeIssueStatus"/>
+        <result column="REASON_FOR_REJECT" property="reasonForReject"/>
+        <result column="ISSUE_BY" property="issueBy"/>
+        <result column="ISSUE_DATE" property="issueDate"/>
+        <result column="SUBMIT_BY" property="submitBy"/>
+        <result column="SUBMIT_DATE" property="submitDate"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="COMMENTS" property="comments"/>
+        <result column="ATTRIBUTE1" property="attribute1"/>
+        <result column="ATTRIBUTE2" property="attribute2"/>
+        <result column="ATTRIBUTE3" property="attribute3"/>
+    </resultMap>
+
+    <select id="selectApplyListByHID" parameterType="String" resultMap="applyListMap">
+        SELECT <include refid="applyListColumn"/>
+        FROM PUR_APPLY_LIST
+        WHERE APPLY_NO = #{id}
+    </select>
+
+</mapper>

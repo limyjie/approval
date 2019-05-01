@@ -12,6 +12,7 @@ import com.prd.approval.entity.Auditor;
 import com.prd.approval.entity.Process;
 import com.prd.approval.entity.StepStaff;
 import com.prd.approval.service.ProcessService;
+import com.prd.approval.utils.ConstantUtil;
 import com.prd.approval.utils.IDNOUtil;
 import com.prd.approval.utils.LogUtil;
 import com.prd.approval.utils.ResponseUtil;
@@ -68,7 +69,7 @@ public class ProcessServiceImpl implements ProcessService {
         process.setStepCount(process.getStepCount());
         process.setStepName(process.getStepName());
         process.setStepType(0);
-        process.setStepCode(IDNOUtil.getIDNO());
+        process.setStepCode(ConstantUtil.getUserStepCode());
         process.setStepDescription(process.getStepDescription());
         process.setTimesCount(process.getTimesCount());
         process.setTimesRemain(process.getTimesCount());

@@ -25,40 +25,17 @@ import java.util.logging.Logger;
 @Aspect
 public class HttpAspect {
 
-    private final static Logger logger = Logger.getLogger(HttpAspect.class.getCanonicalName());
+
 
     @Pointcut("execution(public * com.prd.approval.controller.*.*(..))")
     public void point() {
     }
 
+    /*
+    异步输出日志，减少响应时间
+     */
     @Before("point()")
-    public void beforeExecution(JoinPoint joinPoint) {
-        ServletRequestAttributes servletRequestAttributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-        logger.log(Level.WARNING, "------Start------");
-        //获取所有的消息头名称
-        Enumeration<String> headerNames = request.getHeaderNames();
-        //获取获取的消息头名称，获取对应的值，并输出
-
-        logger.log(Level.WARNING, "Method: " + request.getMethod());
-        logger.log(Level.WARNING, "RequestURI: " + request.getRequestURI());
-        logger.log(Level.WARNING, "Address: " + request.getRemoteUser());
-        logger.log(Level.WARNING, "ContextPath: " + request.getContextPath());
-        logger.log(Level.WARNING, "Header: ");
-        while (headerNames.hasMoreElements()) {
-            String nextElement = headerNames.nextElement();
-            logger.log(Level.WARNING, nextElement + ":" + request.getHeader(nextElement));
-        }
-       /* Object[] objects = joinPoint.getArgs();
-        for (Object o : objects) {
-            if (o instanceof HttpServletRequest || o instanceof HttpServletResponse) {
-                continue;
-            }
-            logger.log(Level.WARNING, "Parameters: ");
-            logger.log(Level.WARNING, JSON.toJSONString(o));
-        }*/
-        logger.log(Level.WARNING, "-------End--------");
-        logger.log(Level.WARNING, "");
+    public void beforeExecution() {
+       new Thread(new HttpLogTask((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())).start();
     }
 }

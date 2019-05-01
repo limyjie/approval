@@ -38,5 +38,6 @@ public interface TemplateDAO {
 
     Event selectActiveTemplateByBillCode(String billCode);
 
+    List<Event> selectTodoEventListByUserId(String userId);
 
 }

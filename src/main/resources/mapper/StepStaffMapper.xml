@@ -3,8 +3,8 @@
 <mapper namespace="com.prd.approval.dao.StepStaffDAO">
 
     <sql id="stepStaffColumn">
-        IDNO,HID,STATUS,SORT_NO,STAFF_NO,STAFF_NAME,STAFF_DEPA,STAFF_DEPA_NAME,
-        AP_RESULT,AP_COMMENT,AP_DATE
+        IDNO, HID, STATUS, SORT_NO, STAFF_NO, STAFF_NAME, STAFF_DEPA, STAFF_DEPA_NAME,
+        AP_RESULT, AP_COMMENT, AP_DATE
     </sql>
 
     <resultMap id="stepStaffMap" type="com.prd.approval.entity.StepStaff">
@@ -47,18 +47,51 @@
     </insert>
 
     <delete id="deleteStepStaffByProcessId" parameterType="String">
-        DELETE FROM AP_STEP_STAFF
+        DELETE
+        FROM AP_STEP_STAFF
         WHERE HID = #{processId}
     </delete>
 
     <select id="selectStepStaffsByProcessId" resultMap="stepStaffMap">
-        SELECT <include refid="stepStaffColumn"/>
+        SELECT
+        <include refid="stepStaffColumn"/>
         FROM AP_STEP_STAFF
         WHERE HID =#{processId}
     </select>
 
     <select id="whetherHaveNewEventToDo" parameterType="String" resultMap="stepStaffMap">
-
+        SELECT
+        <include refid="stepStaffColumn"/>
+        FROM (
+        SELECT *
+        from AP_STEP_STAFF
+        WHERE HID IN(select IDNO
+        from ap_step
+        where ap_step.IDNO IN(select current_step_id from AP_EVENT where IS_MODEL = 0
+        AND STATUS = 1)))
+        where STAFF_NO = #{userId}
     </select>
 
+    <update id="updateStepStaffByStepIdAndStaffId" parameterType="com.prd.approval.entity.StepStaff">
+        UPDATE AP_STEP_STAFF
+        <set>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="apResult != null">
+                AP_RESULT = #{apResult},
+            </if>
+            <if test="apComment != null">
+                AP_COMMENT = #{apComment},
+            </if>
+        </set>
+        WHERE HID = #{hId} AND STAFF_NO = #{staffNo}
+    </update>
+
+    <select id="selectByStepIdAndStaffId" resultMap="stepStaffMap">
+        SELECT
+        <include refid="stepStaffColumn"/>
+        FROM AP_STEP_STAFF
+        WHERE HID = #{stepId} AND STAFF_NO = #{staffId}
+    </select>
 </mapper>

@@ -62,11 +62,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseUtil<List<Message>> checkMessage(String userId) {
+    public ResponseUtil<List<Event>> checkMessage(String userId) {
 
-        stepStaffDAO.whetherHaveNewEventToDo(userId);
 
-        return null;
+
+        List<Event> eventList = templateDAO.selectTodoEventListByUserId(userId);
+
+        if(eventList.size()==0){
+            return new ResponseUtil<>(1,"暂无消息");
+        }
+        return new ResponseUtil<>(1,"您有新的消息",eventList);
+
     }
 
     @Override
@@ -121,22 +127,31 @@ public class UserServiceImpl implements UserService {
     // result：未审批notExamine 通过pass 未通过notPass
     @Transactional
     @Override
-    public ResponseUtil<Event> doApproval(String eventId, String result, String remarks) {
+    public ResponseUtil<Event> doApproval(String eventId, String result, String remarks, String auditorId) {
 
         Event event = templateDAO.selectTemplateById(eventId);
-        String stepId = event.getCurrentStepId();
-        Process current = processDAO.selectProcessById(stepId);
-
         String msg;
-        switch (event.getStatus()){
-            case "3":msg = "该审批事件已执行完毕，无需继续执行";break;
-            case "4":msg = "该审批事件被拒绝，无法执行审批";break;
-            case "5":msg = "该审批事件被中止，无法执行审批";break;
-            default:msg = null;
+        switch (event.getStatus()) {
+            case "3":
+                msg = "该审批事件已执行完毕，无需继续执行";
+                break;
+            case "4":
+                msg = "该审批事件被拒绝，无法执行审批";
+                break;
+            case "5":
+                msg = "该审批事件被中止，无法执行审批";
+                break;
+            default:
+                msg = null;
         }
-        if(msg!=null){
-            return new ResponseUtil<>(1,msg);
+        if (msg != null) {
+            return new ResponseUtil<>(1, msg);
         }
+
+
+        Process current = processDAO.selectProcessById(event.getCurrentStepId());
+        StepStaff stepStaff = stepStaffDAO.selectByStepIdAndStaffId(current.getId(), auditorId);
+
 /*
  event: status  1 新建， 3 通过审批，  4 被拒绝， 5 被中止
  process :status 1 新建，2 正在执行(开启),3 通过，4 = 被拒绝
@@ -155,29 +170,43 @@ public class UserServiceImpl implements UserService {
                 int remain = current.getTimesRemain() - 1;
                 current.setTimesRemain(remain);
                 current.setStatus("2");
+                stepStaff.setApComment(remarks);
+                //1 = 未审批， 3 = 审批通过， 4 = 拒绝
+                stepStaff.setApResult("3");
+                // 1 = 未执行，2 = 已执行(通过或拒绝)
+                stepStaff.setStatus("2");
+                stepStaff.setApDate(new Timestamp(System.currentTimeMillis()));
+                stepStaffDAO.updateStepStaffByStepIdAndStaffId(stepStaff);
                 //if times remain == 0 , update current process
                 if (remain == 0) {
                     current.setStatus("3");
                     Process next = processDAO.selectNextProcess(current);
-                    if(next == null){
+                    if (next == null) {
                         event.setStatus("3");
                         processDAO.updateProcess(current);
                         templateDAO.updateTemplate(event);
-                        return new ResponseUtil<>(1,"审批事件 "+eventId+" 全部执行结束");
+                        return new ResponseUtil<>(1, "审批事件 " + eventId + " 全部执行结束");
                     }
                     event.setCurrentStepId(next.getId());
                     event.setCurrentStepSortNo(next.getSortNo());
                     processDAO.updateProcess(current);
                     templateDAO.updateTemplate(event);
-                    return new ResponseUtil<>(1,"执行审批阶段 "+current.getId()+" 成功,审批事件进入下一审批阶段："+next.getId());
+                    return new ResponseUtil<>(1, "执行审批阶段 " + current.getId() + " 成功,审批事件进入下一审批阶段：" + next.getId());
                 }
                 processDAO.updateProcess(current);
                 templateDAO.updateTemplate(event);
-                return new ResponseUtil<>(1, "执行审批阶段 "+current.getId()+" 成功，该阶段剩余审批次数："+current.getTimesRemain());
+                return new ResponseUtil<>(1, "执行审批阶段 " + current.getId() + " 成功，该阶段剩余审批次数：" + current.getTimesRemain());
             }
             case "notPass": {
+                stepStaff.setApComment(remarks);
+                //1 = 未审批， 3 = 审批通过， 4 = 拒绝
+                stepStaff.setApResult("4");
+                // 1 = 未执行，2 = 已执行(通过或拒绝)
+                stepStaff.setStatus("2");
+                stepStaff.setApDate(new Timestamp(System.currentTimeMillis()));
                 current.setStatus("4");
                 event.setStatus("4");
+                stepStaffDAO.updateStepStaffByStepIdAndStaffId(stepStaff);
                 processDAO.updateProcess(current);
                 templateDAO.updateTemplate(event);
                 return new ResponseUtil<>(1, "拒绝审批阶段成功");
@@ -193,10 +222,10 @@ public class UserServiceImpl implements UserService {
 
         ApplyHeader applyHeader = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
 
-        if(applyHeader != null){
-            return new ResponseUtil<>(1,"目标单据类型查询成功",applyHeader);
+        if (applyHeader != null) {
+            return new ResponseUtil<>(1, "目标单据类型查询成功", applyHeader);
         }
-        return new ResponseUtil<>(0,"目标单据类型查询结果为空");
+        return new ResponseUtil<>(0, "目标单据类型查询结果为空");
 
     }
 

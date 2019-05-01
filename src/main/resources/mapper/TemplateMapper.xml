@@ -186,5 +186,18 @@
         AND IS_ACTIVE = 1
     </select>
 
+    <select id="selectTodoEventListByUserId" resultMap="templateMap" parameterType="String">
+        select <include refid="templateColumn"/>
+        from AP_EVENT
+        where IDNO in(select EVENT_ID
+                      from ap_step
+                      where TIMES_REMAIN > 0
+                        and (status = 1 or status = 2)
+                        and idno in(
+                                   select hid
+                                   from ap_step_staff
+                                   where staff_no = #{userId}
+                                      and status = '1'))
+    </select>
 
 </mapper>

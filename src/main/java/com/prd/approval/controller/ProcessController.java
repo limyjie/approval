@@ -69,7 +69,6 @@ public class ProcessController {
     public ResponseUtil<Process> modifyProcess(@RequestBody Map<String, Object> map){
         Process process = JSON.parseObject(JSON.toJSONString(map.get("process")), Process.class);
         ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(map.get("list")), ArrayList.class);
-
         return processService.modifyProcess(process,arrayList);
     }
 

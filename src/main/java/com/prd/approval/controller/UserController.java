@@ -37,12 +37,12 @@ public class UserController {
     }
 
     /**
-     * <p>用户登录后，检查是否有新的消息</p>
+     * <p>用户登录后，返回需要审批的事件</p>
      * @param userID
      * @return
      */
     @PostMapping("/checkMessage/{userId}")
-    public ResponseUtil<List<Message>> checkMessage(@PathVariable("userId")String userID){
+    public ResponseUtil<List<Event>> checkMessage(@PathVariable("userId")String userID){
         return userService.checkMessage(userID);
     }
 
@@ -69,7 +69,8 @@ public class UserController {
         String eventId = map.get("eventId").toString();
         String result = map.get("result").toString();
         String remarks = map.get("remarks").toString();
-        return userService.doApproval(eventId,result,remarks);
+        String auditorId = map.get("auditorId").toString();
+        return userService.doApproval(eventId,result,remarks,auditorId);
     }
 
     @GetMapping("/getTargetBill/{id}")

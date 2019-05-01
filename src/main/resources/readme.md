@@ -95,3 +95,17 @@ post
 }
 ```
 
+## 执行审批
+result 为 审批结果 ，可选项：pass  notPass 
+```json
+{
+	"auditorId":"101",
+	"eventId":"57692",
+	"result":"pass",
+	"remarks":"bb"
+}
+```
+
+## 查看目标单据
+get  
+<http://139.199.126.58:9000/user/getTargetBill/{id}>

@@ -14,7 +14,7 @@ public interface UserService {
 
     ResponseUtil<User> login(User webUser);
 
-    ResponseUtil<List<Message>> checkMessage(String userId);
+    ResponseUtil<List<Event>> checkMessage(String userId);
 
     ResponseUtil<List<Message>> getMessage();
 
@@ -22,7 +22,7 @@ public interface UserService {
 
     ResponseUtil<Map<String,Object>> getApprovalEvent(String eventId);
 
-    ResponseUtil<Event> doApproval(String eventId,String result,String remarks);
+    ResponseUtil<Event> doApproval(String eventId,String result,String remarks,String auditorId);
 
-    ResponseUtil<ApplyHeader> getTargetBill(String id);
+    ResponseUtil<ApplyHeader> getTargetBill(String processId);
 }

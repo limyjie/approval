@@ -109,3 +109,8 @@ result 为 审批结果 ，可选项：pass  notPass
 ## 查看目标单据
 get  
 <http://139.199.126.58:9000/user/getTargetBill/{id}>
+
+
+## 根据用户ID查看是否有需要审批的事件
+post  
+<http://139.199.126.58:9000/checkMessage/{id}>

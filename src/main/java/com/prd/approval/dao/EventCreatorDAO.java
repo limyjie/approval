@@ -9,7 +9,7 @@ import com.prd.approval.entity.EventCreator;
 import java.util.List;
 
 /**
- *<p>发起人</p>
+ *<p>发起人  表 ：AP_EVENT_CREATOR </p>
  *
  */
 public interface EventCreatorDAO {
@@ -19,6 +19,7 @@ public interface EventCreatorDAO {
     int deleteEventCreatorByEventId(String eventId);
 
     List<EventCreator> selectEventCreatorByTemplateId(String templateId);
+
 
 
 }

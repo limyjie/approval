@@ -110,5 +110,11 @@
         FROM AP_STEP
         WHERE STEP_NAME = #{stepName}
     </select>
+
+    <select id="selectProcessBelongEvent" parameterType="String" resultMap="processMap">
+        SELECT <include refid="processColumn"/>
+        FROM AP_STEP
+        WHERE EVENT_ID = #{eventId}
+    </select>
 </mapper>
 

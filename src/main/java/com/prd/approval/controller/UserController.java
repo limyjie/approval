@@ -31,53 +31,97 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseUtil<User> login(@RequestBody User webUser){
+    public ResponseUtil<User> login(@RequestBody User webUser) {
 
         return userService.login(webUser);
     }
 
     /**
      * <p>用户登录后，返回需要审批的事件</p>
+     *
      * @param userID
      * @return
      */
     @PostMapping("/checkMessage/{userId}")
-    public ResponseUtil<List<Event>> checkMessage(@PathVariable("userId")String userID){
+    public ResponseUtil<List<Event>> checkMessage(@PathVariable("userId") String userID) {
         return userService.checkMessage(userID);
     }
 
-    @GetMapping("/getApMessage")
-    public ResponseUtil<List<Message>> getMessage(){
-        return userService.getMessage();
+    @GetMapping("/getMessage/{userId}")
+    public ResponseUtil<List<Message>> getMessage(@PathVariable("userId") String userId) {
+        return userService.getMessage(userId);
     }
 
 
     @PostMapping("/sendMessage")
-    public ResponseUtil<Message> postMessage(@RequestBody Message message){
-
+    public ResponseUtil<Message> postMessage(@RequestBody Message message) {
         return userService.sendMessage(message);
     }
 
     @GetMapping("/getEvent/{id}")
-    public ResponseUtil<Map<String,Object>> getApprovalEvent(@PathVariable("id")String eventId){
+    public ResponseUtil<Map<String, Object>> getApprovalEvent(@PathVariable("id") String eventId) {
         return userService.getApprovalEvent(eventId);
     }
 
     // 执行审批
     @PostMapping("/doApproval")
-    public ResponseUtil<Event> doApproval(@RequestBody Map<String,Object> map){
+    public ResponseUtil<Event> doApproval(@RequestBody Map<String, Object> map) {
         String eventId = map.get("eventId").toString();
         String result = map.get("result").toString();
         String remarks = map.get("remarks").toString();
         String auditorId = map.get("auditorId").toString();
-        return userService.doApproval(eventId,result,remarks,auditorId);
+        return userService.doApproval(eventId, result, remarks, auditorId);
     }
 
     @GetMapping("/getTargetBill/{id}")
-    public ResponseUtil<ApplyHeader> getTargetBill(@PathVariable("id")String id ){
+    public ResponseUtil<ApplyHeader> getTargetBill(@PathVariable("id") String id) {
         return userService.getTargetBill(id);
     }
 
+    /**
+     * <p>
+     * 需求：根据事件ID获取事件
+     * 获取数据：事件名、描述、目标单据、发起人、创建日期
+     * </p>
+     * @param
+     * @return
+     */
+    @GetMapping("/event/{eventId}")
+    public ResponseUtil<Map<String, Object>> getEvent(@PathVariable("eventId")String eventId) {
 
+        return userService.getEventByIdAndUser(eventId);
+    }
+
+
+    /**
+     * 查看审批记录（可以看到所有记录）
+     * 需求：根据单据编号、发起人、事件状态等任意某个或多个数据查询审批记录
+     * 获取数据：发起人、事件名[]
+     * @param map
+     * @return
+     */
+    @PostMapping("/event/case")
+    public ResponseUtil<List<Map<String,Object>>> getByCase(@RequestBody Map<String,String> map){
+        String billNo = map.get("billNo");
+        String creator = map.get("creator");
+        String eventStatus = map.get("status");
+        return userService.getEventByCase(billNo,creator,eventStatus);
+    }
+
+    /**
+     * 根据 eventId  返回 事件、发起人、当前执行的阶段
+     *
+     * @param eventId
+     * @return
+     */
+    @GetMapping("/event/detail/{eventId}")
+    public ResponseUtil<Map<String,Object>> getEventProcessCreator(@PathVariable("eventId") String eventId){
+        return userService.getEventProcessCreator(eventId);
+    }
+
+    @GetMapping("/event/allDetail/{eventId}")
+    public ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(@PathVariable("eventId") String eventId){
+        return userService.getEventAllProcessCreatorAuditor(eventId);
+    }
 
 }

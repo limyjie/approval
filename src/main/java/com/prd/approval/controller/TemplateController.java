@@ -123,4 +123,24 @@ public class TemplateController {
     public JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {
         return mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
     }
+
+    /**
+     * 执行审批事件窗口（只能查询到登陆者的记录，其他人的无法看到）
+     *      需求：根据已执行、全部、未执行查询审批事件
+     * 传给后台数据：已执行、全部、未执行
+     * @param map
+     * @return
+     */
+    @PostMapping("/event/byStatus")
+    public ResponseUtil<List<Event>> getEventByStatus(@RequestBody Map<String,String> map){
+        String status = map.get("status");
+        String userId = map.get("userId");
+        if(userId == null || userId.trim().isEmpty()){
+            return new ResponseUtil<>(0,"用户编码不能为空");
+        }
+        if("done".equals(status) || "all".equals(status) || "todo".equals(status)){
+            return templateService.getEventByStatusAndUser(status,userId);
+        }
+        return new ResponseUtil<>(0,"审批事件状态错误");
+    }
 }

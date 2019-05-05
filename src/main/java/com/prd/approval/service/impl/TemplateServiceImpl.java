@@ -107,7 +107,6 @@ public class TemplateServiceImpl implements TemplateService {
             eventCreator.setCreatorNo(originator.getId());
             eventCreator.setCreatorName(originator.getName());
             eventCreator.setCreatorDepartment(originator.getDepartment());
-            System.out.println(eventCreator.toString());
             eventCreatorList.add(eventCreator);
         }
         eventCreatorDAO.insertEventCreator(eventCreatorList);
@@ -275,6 +274,13 @@ public class TemplateServiceImpl implements TemplateService {
         //删除发起人
         eventCreatorDAO.deleteEventCreatorByEventId(templateId);
         return new ResponseUtil<>(1, "审批模板 " + templateId + " 删除成功");
+    }
+
+    @Override
+    public ResponseUtil<List<Event>> getEventByStatusAndUser(String status,String userId) {
+        List<Event> eventList = templateDAO.selectEventByStatusAndUser(status,userId);
+
+        return new ResponseUtil<>(1,"查询事件成功",eventList);
     }
 
     /**

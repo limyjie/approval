@@ -21,6 +21,7 @@ public interface ProcessDAO {
     int updateProcess(Process process);
 
     List<Process> selectProcessBelongTemplate(String templateId);
+    List<Process> selectProcessBelongEvent(String eventId);
 
     Process selectNextProcess(Process currentProcess);
 }

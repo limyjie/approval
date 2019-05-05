@@ -20,6 +20,7 @@ public interface AuditorDAO {
     List<Auditor> selectAllAuditor4Frontend();
 
 
+
     Auditor selectAuditorById(String id);
 
     String selectDepartmentNameById(String departmentId);

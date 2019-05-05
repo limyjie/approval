@@ -31,4 +31,6 @@ public interface TemplateService {
     ResponseUtil<Event> modifyTemplate(Event event,List<String> originatorIdList,List<String> processIdList);
 
     ResponseUtil<Event> removeTemplate(String templateId);
+
+    ResponseUtil<List<Event>> getEventByStatusAndUser(String status,String userId);
 }

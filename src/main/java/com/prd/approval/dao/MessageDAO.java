@@ -15,4 +15,5 @@ public interface MessageDAO {
 
     int insertMessage(Message message);
 
+    List<Message> selectAllMessageToUser(String toUser);
 }

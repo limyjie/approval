@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -32,6 +29,9 @@ public class UserServiceImpl implements UserService {
     private TemplateDAO templateDAO;
 
     @Autowired
+    private AuditorDAO auditorDAO;
+
+    @Autowired
     private MessageDAO messageDAO;
 
     @Autowired
@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ApplyHeaderDAO applyHeaderDAO;
+
+    @Autowired
+    private EventCreatorDAO eventCreatorDAO;
 
     @Override
     public ResponseUtil<User> login(User webUser) {
@@ -65,20 +68,19 @@ public class UserServiceImpl implements UserService {
     public ResponseUtil<List<Event>> checkMessage(String userId) {
 
 
-
         List<Event> eventList = templateDAO.selectTodoEventListByUserId(userId);
 
-        if(eventList.size()==0){
-            return new ResponseUtil<>(1,"暂无消息");
+        if (eventList.size() == 0) {
+            return new ResponseUtil<>(1, "暂无消息");
         }
-        return new ResponseUtil<>(1,"您有新的消息",eventList);
+        return new ResponseUtil<>(1, "您有新的消息", eventList);
 
     }
 
     @Override
-    public ResponseUtil<List<Message>> getMessage() {
+    public ResponseUtil<List<Message>> getMessage(String toUserId) {
 
-        List<Message> messageList = messageDAO.selectAllApprovalMessage();
+        List<Message> messageList = messageDAO.selectAllMessageToUser(toUserId);
 
         return new ResponseUtil<>(1, "消息查询成功", messageList);
     }
@@ -227,6 +229,59 @@ public class UserServiceImpl implements UserService {
         }
         return new ResponseUtil<>(0, "目标单据类型查询结果为空");
 
+    }
+
+    @Override
+    public ResponseUtil<Map<String, Object>> getEventByIdAndUser(String eventId) {
+        Map<String, Object> map = templateDAO.selectEventAndCreatorByEventId(eventId);
+        return new ResponseUtil<>(1, "查询成功", map);
+    }
+
+    @Override
+    public ResponseUtil<List<Map<String, Object>>> getEventByCase(String billNo, String creator, String eventStatus) {
+        billNo = billNo == null ? null : billNo.trim().isEmpty() ? null : billNo;
+        creator = creator == null ? null : creator.trim().isEmpty() ? null : creator;
+        eventStatus = eventStatus == null ? null : eventStatus.trim().isEmpty() ? null : eventStatus;
+        List<Map<String, Object>> resultMapList = templateDAO.selectEventAndOriginatorByCase(billNo, creator, eventStatus);
+        if (resultMapList.size() == 0) {
+            return new ResponseUtil<>(1, "查询成功，结果为空");
+        }
+        return new ResponseUtil<>(1, "查询成功", resultMapList);
+
+    }
+
+    @Override
+    public ResponseUtil<Map<String, Object>> getEventProcessCreator(String eventId) {
+        Map<String, Object> map = templateDAO.selectEventAndCreatorAndCurrentProcess(eventId);
+        return new ResponseUtil<>(1, "查询成功", map);
+    }
+
+    @Override
+    public ResponseUtil<Map<String, Object>> getEventAllProcessCreatorAuditor(String eventId) {
+
+        Event event = templateDAO.selectTemplateById(eventId);
+        List<Process> processList = processDAO.selectProcessBelongEvent(eventId);
+        List<EventCreator> creatorList = eventCreatorDAO.selectEventCreatorByTemplateId(eventId);
+
+
+        Map<String,Object> processMap ;
+        Map<String,Object> resultMap = new HashMap<>();
+        List<Map<String,Object>> mapList = new ArrayList<>();
+        resultMap.put("event",event);
+        resultMap.put("creator",creatorList);
+
+        List<StepStaff> stepStaffList;
+        for(Process p:processList){
+            processMap = new HashMap<>();
+            processMap.put("process",p);
+            stepStaffList = stepStaffDAO.selectStepStaffsByProcessId( p.getId());
+            processMap.put("stepStaff",stepStaffList);
+            mapList.add(processMap);
+        }
+
+        resultMap.put("processList",mapList);
+
+        return new ResponseUtil<>(1,"查询成功",resultMap);
     }
 
 }

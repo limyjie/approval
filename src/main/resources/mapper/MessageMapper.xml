@@ -30,6 +30,17 @@
         WHERE MESSAGE_TYPE = 'ap'
     </select>
 
+    <select id="selectAllMessageToUser" parameterType="String" resultMap="messageMap">
+        SELECT  <include refid="messageColumn"/>
+        FROM MESSAGE
+        WHERE MESSAGE_TYPE = 'ap'
+        AND TOUSER = (
+          SELECT EMNO
+          FROM TCCOM001
+          WHERE LOGINID =#{toUserId}
+        )
+    </select>
+
     <!--SERA : toUser 收到的消息的序列号 每次在最大值的基础上加一
     NVL(expr1,expr2) :  expr1 == null ? expr2 : expr1
     -->

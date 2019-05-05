@@ -39,4 +39,6 @@
         WHERE DEPA = #{id}
     </select>
 
+
+
 </mapper>

@@ -44,6 +44,39 @@
         <result property="createDate" column="create_date"/>
     </resultMap>
 
+    <resultMap id="simpleMap" type="java.util.HashMap">
+        <!--
+        map.key = property
+        map.value = column
+        -->
+        <id property="id" column="IDNO"/>
+        <result property="eventName" column="EVENT_NAME"/>
+        <result property="eventDescription" column="EVENT_DESCRIPTION"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="applyNo" column="APPLY_NO"/>
+        <result property="applyName" column="APPLY_NAME"/>
+        <result property="billName" column="BILL_NAME"/>
+        <result property="billNo" column="BILL_NO"/>
+        <collection property="originatorList"
+                    column="IDNO"
+                    select="com.prd.approval.dao.EventCreatorDAO.selectEventCreatorByTemplateId"/>
+    </resultMap>
+
+    <!--封装 事件、发起人、当前执行的阶段-->
+    <resultMap id="eventCreatorCurrentProcessMap" type="java.util.Map">
+        <association property="event"
+                     column="eventId"
+                     javaType="com.prd.approval.entity.Event"
+                     select="com.prd.approval.dao.TemplateDAO.selectTemplateById"/>
+        <association property="creator" column="eventId"
+                     select="com.prd.approval.dao.EventCreatorDAO.selectEventCreatorByTemplateId"/>
+        <association property="currentProcess"
+                    column="currentStepId"
+                     javaType="com.prd.approval.entity.Process"
+                    select="com.prd.approval.dao.ProcessDAO.selectProcessById"/>
+    </resultMap>
+
+
     <insert id="insertTemplate">
         INSERT INTO AP_EVENT (IDNO,
                               IS_MODEL,
@@ -96,7 +129,6 @@
         FROM AP_EVENT
         WHERE IS_ACTIVE = '1' AND IS_MODEL = '1'
     </select>
-
 
     <select id="selectTemplateById" resultMap="templateMap">
         SELECT
@@ -177,7 +209,6 @@
         WHERE EVENT_NAME = #{templateName}
     </select>
 
-
     <select id="selectActiveTemplateByBillCode" parameterType="String" resultMap="templateMap">
         SELECT
         <include refid="templateColumn"/>
@@ -187,17 +218,79 @@
     </select>
 
     <select id="selectTodoEventListByUserId" resultMap="templateMap" parameterType="String">
-        select <include refid="templateColumn"/>
+        select
+        <include refid="templateColumn"/>
         from AP_EVENT
         where IDNO in(select EVENT_ID
-                      from ap_step
-                      where TIMES_REMAIN > 0
-                        and (status = 1 or status = 2)
-                        and idno in(
-                                   select hid
-                                   from ap_step_staff
-                                   where staff_no = #{userId}
-                                      and status = '1'))
+        from ap_step
+        where TIMES_REMAIN > 0
+        and (status = 1 or status = 2)
+        and idno in(
+        select hid
+        from ap_step_staff
+        where staff_no = #{userId}
+        and status = '1'))
     </select>
+
+    <select id="selectEventByStatusAndUser" resultMap="templateMap">
+        SELECT
+        <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IS_MODEL = 0
+        AND IDNO IN (
+        SELECT HID
+        FROM AP_EVENT_CREATOR
+        WHERE AP_EVENT_CREATOR.CREATOR_NO = #{userId}
+        )
+        <choose>
+            <when test="status == 'done' ">
+                AND (STATUS = 3 OR STATUS = 4)
+            </when>
+            <when test="status == 'all' ">
+            </when>
+            <when test="status == 'todo' ">
+                AND STATUS = 1
+            </when>
+        </choose>
+    </select>
+
+
+    <select id="selectEventAndCreatorByEventId" resultMap="simpleMap">
+        SELECT IDNO, EVENT_NAME, EVENT_DESCRIPTION, CREATE_DATE, BILL_NAME, BILL_NO
+        FROM AP_EVENT
+        WHERE IS_MODEL = 0
+          AND AP_EVENT.IDNO = #{eventId}
+    </select>
+
+    
+    <!--
+查看审批记录（可以看到所有记录）
+1、需求：根据单据编号、发起人、事件状态等任意某个或多个数据查询审批记录
+获取数据：发起人、事件名[]
+-->
+    <select id="selectEventAndOriginatorByCase" resultType="java.util.Map">
+        SELECT c.CREATOR_NO as "creatorNo" ,c.CREATOR_NAME AS "creatroName",
+               e.EVENT_NAME as "eventName"
+        FROM AP_EVENT_CREATOR c,AP_EVENT e
+        WHERE e.IDNO = c.HID
+        AND e.IS_MODEL = 0
+        <if test="billNo != null">
+            AND e.BILL_NO = #{billNo}
+        </if>
+        <if test="creator !=null">
+            AND c.CREATOR_NAME = #{creator}
+        </if>
+        <if test="status != null">
+            AND e.STATUS = #{status}
+        </if>
+    </select>
+
+
+    <select id="selectEventAndCreatorAndCurrentProcess" resultMap="eventCreatorCurrentProcessMap">
+      SELECT IDNO as "eventId" ,CURRENT_STEP_ID as "currentStepId"
+      FROM AP_EVENT
+      WHERE IDNO = #{eventId}
+    </select>
+
 
 </mapper>

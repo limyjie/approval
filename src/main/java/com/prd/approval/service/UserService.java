@@ -16,7 +16,7 @@ public interface UserService {
 
     ResponseUtil<List<Event>> checkMessage(String userId);
 
-    ResponseUtil<List<Message>> getMessage();
+    ResponseUtil<List<Message>> getMessage(String toUserId);
 
     ResponseUtil<Message> sendMessage(Message message);
 
@@ -25,4 +25,12 @@ public interface UserService {
     ResponseUtil<Event> doApproval(String eventId,String result,String remarks,String auditorId);
 
     ResponseUtil<ApplyHeader> getTargetBill(String processId);
+
+    ResponseUtil<Map<String,Object>> getEventByIdAndUser(String eventId);
+
+    ResponseUtil<List<Map<String,Object>>> getEventByCase(String billNo,String creator,String eventStatus);
+
+    ResponseUtil<Map<String,Object>> getEventProcessCreator(String eventId);
+
+    ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(String eventId);
 }

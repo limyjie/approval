@@ -12,7 +12,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    ResponseUtil<User> login(User webUser);
+    ResponseUtil<Map<String,String>> login(User webUser);
 
     ResponseUtil<List<Event>> checkMessage(String userId);
 

@@ -270,7 +270,7 @@
 -->
     <select id="selectEventAndOriginatorByCase" resultType="java.util.Map">
         SELECT c.CREATOR_NO as "creatorNo" ,c.CREATOR_NAME AS "creatroName",
-               e.EVENT_NAME as "eventName"
+               e.EVENT_NAME as "eventName",e.IDNO as "eventId"
         FROM AP_EVENT_CREATOR c,AP_EVENT e
         WHERE e.IDNO = c.HID
         AND e.IS_MODEL = 0

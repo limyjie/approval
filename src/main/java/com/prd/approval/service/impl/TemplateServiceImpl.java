@@ -277,10 +277,18 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public ResponseUtil<List<Event>> getEventByStatusAndUser(String status,String userId) {
+    public ResponseUtil<List<Map<String,Object>>> getEventByStatusAndUser(String status,String userId) {
         List<Event> eventList = templateDAO.selectEventByStatusAndUser(status,userId);
-
-        return new ResponseUtil<>(1,"查询事件成功",eventList);
+        List<Map<String,Object>> mapList = new ArrayList<>();
+        Map<String,Object> map;
+        for(Event event:eventList){
+            String currentStepName = processDAO.selectProcessById(event.getCurrentStepId()).getStepName();
+            map = new HashMap<>();
+            map.put("event",event);
+            map.put("currentStepName",currentStepName);
+            mapList.add(map);
+        }
+        return new ResponseUtil<>(1,"查询事件成功",mapList);
     }
 
     /**

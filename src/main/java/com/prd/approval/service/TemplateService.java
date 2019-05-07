@@ -32,5 +32,5 @@ public interface TemplateService {
 
     ResponseUtil<Event> removeTemplate(String templateId);
 
-    ResponseUtil<List<Event>> getEventByStatusAndUser(String status,String userId);
+    ResponseUtil<List<Map<String,Object>>> getEventByStatusAndUser(String status,String userId);
 }

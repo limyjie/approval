@@ -132,7 +132,7 @@ public class TemplateController {
      * @return
      */
     @PostMapping("/event/byStatus")
-    public ResponseUtil<List<Event>> getEventByStatus(@RequestBody Map<String,String> map){
+    public ResponseUtil<List<Map<String,Object>>> getEventByStatus(@RequestBody Map<String,String> map){
         String status = map.get("status");
         String userId = map.get("userId");
         if(userId == null || userId.trim().isEmpty()){

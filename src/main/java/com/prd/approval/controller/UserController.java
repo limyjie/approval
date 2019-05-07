@@ -31,7 +31,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseUtil<User> login(@RequestBody User webUser) {
+    public ResponseUtil<Map<String,String>> login(@RequestBody User webUser) {
 
         return userService.login(webUser);
     }

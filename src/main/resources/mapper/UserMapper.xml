@@ -13,11 +13,13 @@
     </resultMap>
 
 
-    <select id="selectUserByIdAndPassword" resultMap="userMap">
-        SELECT LOGINID, FULLNAME, PASSWD
-        FROM USERID
-        WHERE LOGINID = #{id}
+    <select id="selectUserByIdAndPassword" resultType="java.util.Map">
+        SELECT USERID.LOGINID, FULLNAME, PASSWD, TCCOM001.EMNO as "USERID"
+        FROM USERID,
+             TCCOM001
+        WHERE USERID.LOGINID = #{id}
           AND PASSWD = #{password}
+          AND USERID.LOGINID = TCCOM001.LOGINID
     </select>
 
     <select id="selectAllUser" resultMap="userMap">

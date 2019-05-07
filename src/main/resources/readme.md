@@ -1,3 +1,13 @@
+# 用户登陆
+post  
+/user/login
+   {
+    	"id":"admin",
+    	"userName":"",
+    	"password":"bb"
+    }
+
+
 # 审批人
 ## 获取
 get  
@@ -97,6 +107,8 @@ post
 
 ## 执行审批
 result 为 审批结果 ，可选项：pass  notPass 
+<http://139.199.126.58:9000/user/doApproval>
+
 ```json
 {
 	"auditorId":"101",
@@ -176,7 +188,7 @@ post
 ## 2、根据事件ID获取记录（此需求上部分已有）
    获取数据：事件名、描述、目标单据、发起人、创建日期
 
-
+<http://139.199.126.58:9000/user/event/allDetail/{eventId}>
 ## 3、根据事件ID获取事件详情（事件、发起人、所有阶段、审批人）
    获取数据：事件名、描述、目标单据、发起人、创建日期
    事件阶段[]、

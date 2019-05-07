@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private EventCreatorDAO eventCreatorDAO;
 
     @Override
-    public ResponseUtil<User> login(User webUser) {
+    public ResponseUtil<Map<String,String>> login(User webUser) {
 
         if (webUser == null
                 || webUser.getId() == null || webUser.getId().isEmpty()
@@ -55,13 +55,13 @@ public class UserServiceImpl implements UserService {
         ) {
             return new ResponseUtil<>(0, "账号和密码不能为空");
         }
-        User user = userDAO.selectUserByIdAndPassword(webUser);
+        Map<String,String> map = userDAO.selectUserByIdAndPassword(webUser);
 
-        if (user == null) {
+        if (map == null) {
             return new ResponseUtil<>(0, "账号或密码错误");
         }
 
-        return new ResponseUtil<>(1, "登陆成功", user);
+        return new ResponseUtil<>(1, "登陆成功", map);
     }
 
     @Override
@@ -234,6 +234,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseUtil<Map<String, Object>> getEventByIdAndUser(String eventId) {
         Map<String, Object> map = templateDAO.selectEventAndCreatorByEventId(eventId);
+        if(map == null || map.isEmpty()){
+            return new ResponseUtil<>(0,"事件 "+eventId+" 不存在");
+        }
+
         return new ResponseUtil<>(1, "查询成功", map);
     }
 

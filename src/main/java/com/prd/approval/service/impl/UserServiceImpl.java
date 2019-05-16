@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         message.setHaveAlert("0");
         message.setHaveRead("0");
         message.setHaveDone("0");
-        message.setMessageType("ap");
+        message.setMessageType("0");
         int result = messageDAO.insertMessage(message);
         if (result == 1) {
             return new ResponseUtil<>(1, "发送消息成功");
@@ -230,12 +230,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseUtil<ApplyHeader> getTargetBill(String applyNo) {
+    public ResponseUtil<Map<String,Object>> getTargetBill(String applyNo) {
 
-        ApplyHeader applyHeader = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
+        Map<String,Object> resultMap = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
 
-        if (applyHeader != null) {
-            return new ResponseUtil<>(1, "目标单据类型查询成功", applyHeader);
+        if (resultMap != null) {
+            return new ResponseUtil<>(1, "目标单据类型查询成功", resultMap);
         }
         return new ResponseUtil<>(0, "目标单据类型查询结果为空");
 
@@ -376,10 +376,9 @@ public class UserServiceImpl implements UserService {
             message.setContent("审批事件 "+event.getId()+" 被拒绝");
             message.setSendTime(new Timestamp(System.currentTimeMillis()));
             message.setHaveRead("0");
-            message.setMessageType("ap");
-            messageList.add(message);
+            message.setMessageType("0");
+            messageDAO.insertMessage(message);
         }
-        messageDAO.insertMessageList(messageList);
     }
 
 }

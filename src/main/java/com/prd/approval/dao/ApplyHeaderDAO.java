@@ -2,6 +2,8 @@ package com.prd.approval.dao;
 
 import com.prd.approval.entity.ApplyHeader;
 
+import java.util.Map;
+
 public interface ApplyHeaderDAO {
-    ApplyHeader selectApplyHeaderByApplyNo(String applyNo);
+    Map<String,Object> selectApplyHeaderByApplyNo(String applyNo);
 }

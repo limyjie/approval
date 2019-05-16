@@ -46,6 +46,9 @@ public class TemplateServiceImpl implements TemplateService {
     @Autowired
     private EventStepRelationDAO eventStepRelationDAO;
 
+    @Autowired
+    private StepStaffDAO stepStaffDAO;
+
     @Transactional
     @Override
     public ResponseUtil<Event> addTemplate(Event event,
@@ -283,8 +286,10 @@ public class TemplateServiceImpl implements TemplateService {
         Map<String,Object> map;
         for(Event event:eventList){
             String currentStepName = processDAO.selectProcessById(event.getCurrentStepId()).getStepName();
+            String stepStaffId = stepStaffDAO.selectByStepIdAndStaffId(event.getCurrentStepId(),userId).getId();
             map = new HashMap<>();
             map.put("event",event);
+            map.put("stepStaffId",stepStaffId);
             map.put("currentStepName",currentStepName);
             mapList.add(map);
         }

@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -28,12 +29,9 @@ public class ApplyListDAOTest {
     public void selectApplyListByHID() {
         String applyNo = "PA000000001";
 
-        ApplyHeader header = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
+        Map<String,Object> header = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
         List<ApplyList> list = applyListDAO.selectApplyListByHID(applyNo);
 
-        System.out.println(header.toString());
-        System.out.println(header.getApplyListList());
-        System.out.println(list.size());
 
     }
 }

@@ -24,7 +24,7 @@ public interface UserService {
 
     ResponseUtil<Event> doApproval(String eventId,String result,String remarks,String auditorId);
 
-    ResponseUtil<ApplyHeader> getTargetBill(String processId);
+    ResponseUtil<Map<String,Object>> getTargetBill(String processId);
 
     ResponseUtil<Map<String,Object>> getEventByIdAndUser(String eventId);
 

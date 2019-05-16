@@ -3,7 +3,6 @@
 <mapper namespace="com.prd.approval.dao.ApplyListDAO">
 
 
-
     <sql id="applyListColumn">
         IDNO,
         HID,
@@ -86,12 +85,40 @@
         <result column="ATTRIBUTE1" property="attribute1"/>
         <result column="ATTRIBUTE2" property="attribute2"/>
         <result column="ATTRIBUTE3" property="attribute3"/>
+        <association property="whCode" column="WH_ID" select="selectWarehouseCode"/>
+        <association property="warehouseName" column="WH_ID" select="selectWarehouseName"/>
+        <association property="itemName" column="ITEM" select="selectItemName"/>
+        <association property="unitName" column="UNIT" select="selectUnitName"/>
+        <association property="projectName" column="PROJECT_NO"
+                     select="com.prd.approval.dao.ApplyHeaderDAO.selectProjectNameByPROJ"/>
     </resultMap>
 
     <select id="selectApplyListByHID" parameterType="String" resultMap="applyListMap">
-        SELECT <include refid="applyListColumn"/>
+        SELECT
+        <include refid="applyListColumn"/>
         FROM PUR_APPLY_LIST
         WHERE APPLY_NO = #{id}
     </select>
 
+
+    <select id="selectItemName" parameterType="String" resultType="String">
+        SELECT DSCA
+        FROM TIITM001
+        WHERE ITEM = #{item}
+    </select>
+    <select id="selectUnitName" parameterType="String" resultType="String">
+        SELECT DSCA
+        FROM TCMCS001
+        WHERE CUNI = #{unit}
+    </select>
+    <select id="selectWarehouseCode" parameterType="String" resultType="String">
+        SELECT WH_CODE
+        FROM INV_WAREHOUSE
+        WHERE WH_ID = #{warehouseId}
+    </select>
+    <select id="selectWarehouseName" parameterType="String" resultType="String">
+        SELECT WH_NAME
+        FROM INV_WAREHOUSE
+        WHERE WH_ID = #{warehouseId}
+    </select>
 </mapper>

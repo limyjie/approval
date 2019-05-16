@@ -81,4 +81,6 @@ public interface TemplateDAO {
         }
         return finalList;
     }
+
+    Event selectTemplateByApplyNo(String applyNo);
 }

@@ -60,8 +60,58 @@ public class ApplyList {
     private String attribute2;
     private String attribute3;
     private String kltc;
+    /*以下属性在数据库中不存在，但仍需用到*/
+    private String projectName;
+    private String warehouseName;
+    //物料名
+    private String itemName;
+    private String whCode;
+    //单位名
+    private String unitName;
 
     public ApplyList() {
+    }
+
+
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getWhCode() {
+        return whCode;
+    }
+
+    public void setWhCode(String whCode) {
+        this.whCode = whCode;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
     }
 
     public String getId() {
@@ -410,6 +460,11 @@ public class ApplyList {
                 ", attribute2='" + attribute2 + '\'' +
                 ", attribute3='" + attribute3 + '\'' +
                 ", kltc='" + kltc + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", warehouseName='" + warehouseName + '\'' +
+                ", itemName='" + itemName + '\'' +
+                ", whCode='" + whCode + '\'' +
+                ", unitName='" + unitName + '\'' +
                 '}';
     }
 }

@@ -109,19 +109,22 @@ public class UserController {
     }
 
     /**
-     * 根据 eventId  返回 事件、发起人、当前执行的阶段
-     *
-     * @param eventId
+     * 根据 id  返回 事件、发起人、当前执行的阶段、以及 step staff
+     * 这个id 可以是 messageId，也可以是 step staff id
+     * @param map
      * @return
      */
-    @GetMapping("/event/detail/{eventId}")
-    public ResponseUtil<Map<String,Object>> getEventProcessCreator(@PathVariable("eventId") String eventId){
-        return userService.getEventProcessCreator(eventId);
+    @PostMapping("/event/detail")
+    public ResponseUtil<Map<String,Object>> getEventProcessCreator(@RequestBody Map<String,String> map){
+
+        return userService.getEventProcessCreator(map);
     }
 
-    @GetMapping("/event/allDetail/{eventId}")
-    public ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(@PathVariable("eventId") String eventId){
-        return userService.getEventAllProcessCreatorAuditor(eventId);
+    @GetMapping("/event/allDetail/{stepStaffId}")
+    public ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(@PathVariable("stepStaffId") String stepStaffId){
+        return userService.getEventAllProcessCreatorAuditor(stepStaffId);
     }
+
+
 
 }

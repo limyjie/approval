@@ -19,8 +19,6 @@
         <result column="HAVEALERT" property="haveAlert"/>
         <result column="HAVEDONE" property="haveDone"/>
         <result column="MESSAGE_TYPE" property="messageType"/>
-
-
     </resultMap>
 
     <select id="selectAllApprovalMessage" resultMap="messageMap">
@@ -34,11 +32,7 @@
         SELECT  <include refid="messageColumn"/>
         FROM MESSAGE
         WHERE MESSAGE_TYPE = 'ap'
-        AND TOUSER = (
-          SELECT EMNO
-          FROM TCCOM001
-          WHERE LOGINID =#{toUserId}
-        )
+        AND TOUSER = #{userId}
     </select>
 
     <!--SERA : toUser 收到的消息的序列号 每次在最大值的基础上加一
@@ -63,6 +57,54 @@
                #{messageType} MESSAGE_TYPE
         FROM MESSAGE
         WHERE TOUSER = #{toUser}
+    </insert>
+
+    <select id="selectMessageByEventId" parameterType="String" resultMap="messageMap">
+        SELECT <include refid="messageColumn"/>
+        FROM AP_MESSAGE,MESSAGE
+        WHERE AP_MESSAGE.EVENT_ID = #{eventId}
+        AND AP_MESSAGE.MESSAGE_ID = MESSAGE.IDNO
+    </select>
+
+    <select id="selectApMessageByApMessage"
+            parameterType="com.prd.approval.entity.ApMessage"
+            resultType="com.prd.approval.entity.ApMessage">
+        SELECT MESSAGE.IDNO as "id",MESSAGE_ID as "messageId",
+                EVENT_ID as "eventId",STEP_ID as "stepId",STAFF_NO as "staffNo",
+                STAFF_ID as "staffId"
+        FROM  AP_MESSAGE,MESSAGE
+        WHERE
+            <choose>
+                <when test="messageId != null">
+                    MESSAGE_ID = #{messageId}
+                </when>
+                <when test="eventId != null">
+                    EVENT_ID = #{eventId}
+                </when>
+                <when test="stepId != null">
+                    STEP_ID = #{stepId}
+                </when>
+            </choose>
+        AND AP_MESSAGE.MESSAGE_ID = MESSAGE.IDNO
+    </select>
+
+    <select id="selectMessageById" parameterType="String" resultMap="messageMap">
+        SELECT <include refid="messageColumn"/>
+        FROM MESSAGE
+        WHERE IDNO =#{messageId}
+    </select>
+
+
+    <insert id="insertMessageList" parameterType="java.util.List">
+
+        <foreach collection="list" item="item">
+            INSERT INTO MESSAGE(IDNO, FROMUSER, TOUSER, SERA, SUBJECT, CONTENT, SENDTIME,HAVEREAD)
+            VALUES (#{id},#{fromUser},#{toUser},#{sera},
+                #{subject},#{content},#{sendTime},#{haveRead})
+        </foreach>
+
+
+
     </insert>
 
 </mapper>

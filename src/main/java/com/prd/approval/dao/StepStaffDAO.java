@@ -24,4 +24,9 @@ public interface StepStaffDAO {
 
     StepStaff selectByStepIdAndStaffId(@Param("stepId")String processId,
                                                 @Param("staffId")String auditorId);
+
+
+    StepStaff selectByStepStaffId(String stepStaffId);
+
+    int selectStepUnApprovalPersonNumber(String stepId);
 }

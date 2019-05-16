@@ -30,7 +30,8 @@ public interface UserService {
 
     ResponseUtil<List<Map<String,Object>>> getEventByCase(String billNo,String creator,String eventStatus);
 
-    ResponseUtil<Map<String,Object>> getEventProcessCreator(String eventId);
+    ResponseUtil<Map<String,Object>> getEventProcessCreator(Map<String,String> map);
 
     ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(String eventId);
+
 }

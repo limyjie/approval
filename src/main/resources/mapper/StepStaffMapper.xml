@@ -94,4 +94,10 @@
         FROM AP_STEP_STAFF
         WHERE HID = #{stepId} AND STAFF_NO = #{staffId}
     </select>
+
+    <select id="selectStepUnApprovalPersonNumber" parameterType="String" resultType="int">
+        SELECT COUNT(HID)
+        FROM AP_STEP_STAFF
+        WHERE HID = #{stepId}
+    </select>
 </mapper>

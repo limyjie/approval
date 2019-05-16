@@ -1,9 +1,10 @@
 package com.prd.approval.dao;
 
 import com.prd.approval.entity.Event;
+import com.prd.approval.entity.EventCreator;
 import org.apache.ibatis.annotations.Param;
-import sun.rmi.transport.ObjectTable;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,36 @@ public interface TemplateDAO {
                                                              @Param("creator") String creator,
                                                              @Param("status") String eventStatus);
 
-    Map<String,Object> selectEventAndCreatorAndCurrentProcess(String eventId);
+    Map<String, Object> selectEventDetailByMessageId(String messageId);
 
-    Map<String,Object> selectEventAndCreatorAndAllProcessAndAuditor(String eventId);
+    Map<String, Object> selectEventDetailByStepStaffId(String stepStaffId);
+
+    Map<String, Object> selectEventAndCreatorAndAllProcessAndAuditor(String eventId);
+
+    List<Event> selectRejectEventByOriginator(String originatorId);
+
+    default List<Map<String, Object>> selectEventByCase(String billNo, String creator, String status) {
+        List<Map<String, Object>> mapList = this.selectEventAndOriginatorByCase(billNo, creator, status);
+        List<Map<String, Object>> finalList = new LinkedList<>();
+        List<EventCreator> eventCreatorList;
+        if (creator != null) {
+            for (Map<String, Object> map : mapList) {
+                boolean containCreator = false;
+                eventCreatorList = (List<EventCreator>) map.get("creatorList");
+                for (EventCreator eventCreator : eventCreatorList) {
+                    if (eventCreator.getCreatorNo().equals(creator)) {
+                        containCreator = true;
+                        break;
+                    }
+                }
+                if (containCreator) {
+                    System.out.println("add: " + map);
+                    finalList.add(map);
+                }
+            }
+        } else {
+            finalList = mapList;
+        }
+        return finalList;
+    }
 }

@@ -23,9 +23,6 @@ public class TemplateDAOTest {
     @Test
     public void selectEventByEventIdAndUserId() {
 
-        String eventId = "57692";
-        Map map = templateDAO.selectEventAndCreatorAndCurrentProcess(eventId);
-        System.out.println(map);
 
 
     }

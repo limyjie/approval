@@ -76,8 +76,36 @@
 
 
 
-
-
+## 执行审批的逻辑
+1. 当前阶段  current ,下一阶段 next，当前审批事件 event
+2. 当前阶段需要通过的审批次数  timeCount
+3. 当前阶段仍需通过的次数  timeRemain
+4. 当前阶段的审批人auditorList
+5. 当前事件的发起人eventCreatorList
+6. 当前阶段的当前执行人 stepStaff
+1. 当auditorList[i] 的审批结果为拒绝时， 
+    stepStaff.comment = '审批备注'
+    stepStaff.result = '拒绝' 
+    1.1 如果 current.timeRemain > 该阶段的未审批的审批人数量
+        current.status = '不通过'
+        event.status = '不通过'
+        发消息给eventCreatorList
+    1.2 如果 current.timeRemain <= 未审批的审批人数量
+         继续执行审批
+2. 当auditorList[i] 的审批结果为通过时，
+    current.timeRemain--;
+    current.status = '正在执行';
+    stepStaff.comment = '审批备注'
+    stepStaff.result = '审批通过'
+     2.1 如果current.timeRemain == 0，
+        current.status = '通过'
+        2.1.1 如果   next == null 
+            event.status = '通过'
+        2.1.2 如果 next != null
+             event.currentStepId = next.id
+             event.currentStepSortNo += 1     
+     2.2 如果 current.timeRemain > 0
+         继续执行审批
 
 
 

@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private EventCreatorDAO eventCreatorDAO;
 
     @Override
-    public ResponseUtil<Map<String,String>> login(User webUser) {
+    public ResponseUtil<Map<String, String>> login(User webUser) {
 
         if (webUser == null
                 || webUser.getId() == null || webUser.getId().isEmpty()
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         ) {
             return new ResponseUtil<>(0, "账号和密码不能为空");
         }
-        Map<String,String> map = userDAO.selectUserByIdAndPassword(webUser);
+        Map<String, String> map = userDAO.selectUserByIdAndPassword(webUser);
 
         if (map == null) {
             return new ResponseUtil<>(0, "账号或密码错误");
@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseUtil<List<Event>> checkMessage(String userId) {
-
 
         List<Event> eventList = templateDAO.selectTodoEventListByUserId(userId);
 
@@ -81,7 +80,9 @@ public class UserServiceImpl implements UserService {
     public ResponseUtil<List<Message>> getMessage(String toUserId) {
 
         List<Message> messageList = messageDAO.selectAllMessageToUser(toUserId);
-
+        if (messageList.size() == 0) {
+            return new ResponseUtil<>(0, "消息为空");
+        }
         return new ResponseUtil<>(1, "消息查询成功", messageList);
     }
 
@@ -172,8 +173,9 @@ public class UserServiceImpl implements UserService {
                 int remain = current.getTimesRemain() - 1;
                 current.setTimesRemain(remain);
                 current.setStatus("2");
+                //审批备注
                 stepStaff.setApComment(remarks);
-                //1 = 未审批， 3 = 审批通过， 4 = 拒绝
+                //审批结果  1 = 未审批， 3 = 审批通过， 4 = 拒绝
                 stepStaff.setApResult("3");
                 // 1 = 未执行，2 = 已执行(通过或拒绝)
                 stepStaff.setStatus("2");
@@ -206,11 +208,19 @@ public class UserServiceImpl implements UserService {
                 // 1 = 未执行，2 = 已执行(通过或拒绝)
                 stepStaff.setStatus("2");
                 stepStaff.setApDate(new Timestamp(System.currentTimeMillis()));
-                current.setStatus("4");
-                event.setStatus("4");
+                current.setTimesRemain(current.getTimesRemain()-1);
+                int personRemainNum = stepStaffDAO.selectStepUnApprovalPersonNumber(stepStaff.getId());
+                if(current.getTimesRemain()< personRemainNum){
+                    current.setStatus("4");
+                    event.setStatus("4");
+                    // 不通过时，检查：当事件的剩余审批次数 小于 事件需要通过的次数时 ，发消息给事件发起人
+                    sendMessageToEventCreatorForReject(event,auditorId);
+                }
+
                 stepStaffDAO.updateStepStaffByStepIdAndStaffId(stepStaff);
                 processDAO.updateProcess(current);
                 templateDAO.updateTemplate(event);
+
                 return new ResponseUtil<>(1, "拒绝审批阶段成功");
             }
             default: {
@@ -234,8 +244,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseUtil<Map<String, Object>> getEventByIdAndUser(String eventId) {
         Map<String, Object> map = templateDAO.selectEventAndCreatorByEventId(eventId);
-        if(map == null || map.isEmpty()){
-            return new ResponseUtil<>(0,"事件 "+eventId+" 不存在");
+        if (map == null || map.isEmpty()) {
+            return new ResponseUtil<>(0, "事件 " + eventId + " 不存在");
         }
 
         return new ResponseUtil<>(1, "查询成功", map);
@@ -246,18 +256,82 @@ public class UserServiceImpl implements UserService {
         billNo = billNo == null ? null : billNo.trim().isEmpty() ? null : billNo;
         creator = creator == null ? null : creator.trim().isEmpty() ? null : creator;
         eventStatus = eventStatus == null ? null : eventStatus.trim().isEmpty() ? null : eventStatus;
-        List<Map<String, Object>> resultMapList = templateDAO.selectEventAndOriginatorByCase(billNo, creator, eventStatus);
+
+        List<Map<String,Object>> resultMapList = templateDAO.selectEventByCase(billNo,creator, eventStatus);
+
         if (resultMapList.size() == 0) {
             return new ResponseUtil<>(1, "查询成功，结果为空");
         }
         return new ResponseUtil<>(1, "查询成功", resultMapList);
 
+
+        /* List<Map<String, Object>> resultMapList = new LinkedList<>();
+        if (creator == null) {
+            for (Event event : eventList) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("event", event);
+                List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
+                map.put("creatorList", eventCreatorList);
+                resultMapList.add(map);
+            }
+        } else {
+            for (Event event : eventList) {
+                List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
+                for(EventCreator eventCreator){
+                    if(eventCreator.getId())
+                }
+            }
+
+        }*/
     }
 
     @Override
-    public ResponseUtil<Map<String, Object>> getEventProcessCreator(String eventId) {
-        Map<String, Object> map = templateDAO.selectEventAndCreatorAndCurrentProcess(eventId);
-        return new ResponseUtil<>(1, "查询成功", map);
+    public ResponseUtil<Map<String, Object>> getEventProcessCreator(Map<String, String> map) {
+        String queryMethod = map.get("queryMethod");
+        String queryId = map.get("queryId");
+        Map<String, Object> resultMap = null;
+        if ("stepStaff".equals(queryMethod)) {
+            resultMap = new HashMap<>();
+
+            StepStaff stepStaff = stepStaffDAO.selectByStepStaffId(queryId);
+            Process process = processDAO.selectProcessById(stepStaff.gethId());
+            Event event = templateDAO.selectTemplateById(process.getEventId());
+            Message message = messageDAO.selectMessageByEventId(event.getId());
+
+            resultMap.put("event", event);
+            resultMap.put("currentStep", process);
+            resultMap.put("message", message);
+            resultMap.put("stepStaff", stepStaff);
+
+        } else if ("message".equals(queryMethod)) {
+            resultMap = new HashMap<>();
+
+
+            ApMessage apMessageParam = new ApMessage();
+            apMessageParam.setMessageId(queryId);
+
+            Message message = messageDAO.selectMessageById(queryId);
+            System.out.println(message);
+            ApMessage apMessage = messageDAO.selectApMessageByApMessage(apMessageParam);
+            System.out.println(apMessage);
+            Event event = templateDAO.selectTemplateById(apMessage.getEventId());
+            System.out.println(event);
+            Process process = processDAO.selectProcessById(event.getCurrentStepId());
+            StepStaff stepStaff = stepStaffDAO.selectByStepIdAndStaffId(event.getCurrentStepId(), apMessage.getStaffNo());
+
+            resultMap.put("event", event);
+            resultMap.put("currentStep", process);
+            resultMap.put("message", message);
+            resultMap.put("stepStaff", stepStaff);
+
+
+        } else {
+            return new ResponseUtil<>(0, "查询方法不正确");
+        }
+
+        return new ResponseUtil<>(1, "查询成功", resultMap);
+
+
     }
 
     @Override
@@ -268,24 +342,44 @@ public class UserServiceImpl implements UserService {
         List<EventCreator> creatorList = eventCreatorDAO.selectEventCreatorByTemplateId(eventId);
 
 
-        Map<String,Object> processMap ;
-        Map<String,Object> resultMap = new HashMap<>();
-        List<Map<String,Object>> mapList = new ArrayList<>();
-        resultMap.put("event",event);
-        resultMap.put("creator",creatorList);
+        Map<String, Object> processMap;
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        resultMap.put("event", event);
+        resultMap.put("creator", creatorList);
 
         List<StepStaff> stepStaffList;
-        for(Process p:processList){
+        for (Process p : processList) {
             processMap = new HashMap<>();
-            processMap.put("process",p);
-            stepStaffList = stepStaffDAO.selectStepStaffsByProcessId( p.getId());
-            processMap.put("stepStaff",stepStaffList);
+            processMap.put("process", p);
+            stepStaffList = stepStaffDAO.selectStepStaffsByProcessId(p.getId());
+            processMap.put("stepStaff", stepStaffList);
             mapList.add(processMap);
         }
 
-        resultMap.put("processList",mapList);
+        resultMap.put("processList", mapList);
 
-        return new ResponseUtil<>(1,"查询成功",resultMap);
+        return new ResponseUtil<>(1, "查询成功", resultMap);
+    }
+
+
+    private void sendMessageToEventCreatorForReject(Event event,String auditorId){
+        List<EventCreator> eventCreatorList  = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
+        List<Message> messageList = new LinkedList<>();
+
+        for(EventCreator eventCreator:eventCreatorList){
+            Message message = new Message();
+            message.setId(IDNOUtil.getIDNO());
+            message.setFromUser(auditorId);
+            message.setToUser(eventCreator.getCreatorNo());
+            message.setSubject("采购申请立项[审批通知]");
+            message.setContent("审批事件 "+event.getId()+" 被拒绝");
+            message.setSendTime(new Timestamp(System.currentTimeMillis()));
+            message.setHaveRead("0");
+            message.setMessageType("ap");
+            messageList.add(message);
+        }
+        messageDAO.insertMessageList(messageList);
     }
 
 }

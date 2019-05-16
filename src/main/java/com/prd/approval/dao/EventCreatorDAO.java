@@ -7,6 +7,7 @@ package com.prd.approval.dao;
 import com.prd.approval.entity.EventCreator;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *<p>发起人  表 ：AP_EVENT_CREATOR </p>
@@ -19,6 +20,7 @@ public interface EventCreatorDAO {
     int deleteEventCreatorByEventId(String eventId);
 
     List<EventCreator> selectEventCreatorByTemplateId(String templateId);
+
 
 
 

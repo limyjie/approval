@@ -71,9 +71,9 @@
         <association property="creator" column="eventId"
                      select="com.prd.approval.dao.EventCreatorDAO.selectEventCreatorByTemplateId"/>
         <association property="currentProcess"
-                    column="currentStepId"
+                     column="currentStepId"
                      javaType="com.prd.approval.entity.Process"
-                    select="com.prd.approval.dao.ProcessDAO.selectProcessById"/>
+                     select="com.prd.approval.dao.ProcessDAO.selectProcessById"/>
     </resultMap>
 
 
@@ -220,16 +220,22 @@
     <select id="selectTodoEventListByUserId" resultMap="templateMap" parameterType="String">
         select
         <include refid="templateColumn"/>
-        from AP_EVENT
-        where IDNO in(select EVENT_ID
-        from ap_step
-        where TIMES_REMAIN > 0
-        and (status = 1 or status = 2)
-        and idno in(
-        select hid
-        from ap_step_staff
-        where staff_no = #{userId}
-        and status = '1'))
+        from ap_event
+        where is_model = 0
+            and is_active = 1
+            and status = 1
+            and (idno,CURRENT_STEP_ID) in(
+                select event_id,idno
+                from ap_step
+                where (status = 1 or status =2)
+                  and event_id is not null
+                  and idno in(
+                    select hid
+                    from ap_step_staff
+                    where staff_no = #{userId}
+                      and status = '1'
+                  )
+            )
     </select>
 
     <select id="selectEventByStatusAndUser" resultMap="templateMap">
@@ -262,34 +268,37 @@
           AND AP_EVENT.IDNO = #{eventId}
     </select>
 
-    
+
     <!--
 查看审批记录（可以看到所有记录）
 1、需求：根据单据编号、发起人、事件状态等任意某个或多个数据查询审批记录
 获取数据：发起人、事件名[]
 -->
-    <select id="selectEventAndOriginatorByCase" resultType="java.util.Map">
-        SELECT c.CREATOR_NO as "creatorNo" ,c.CREATOR_NAME AS "creatroName",
-               e.EVENT_NAME as "eventName",e.IDNO as "eventId"
-        FROM AP_EVENT_CREATOR c,AP_EVENT e
-        WHERE e.IDNO = c.HID
-        AND e.IS_MODEL = 0
+    <resultMap id="tempMap" type="java.util.Map">
+        <result property="eventName" column="EVENT_NAME"/>
+        <result property="eventId" column="IDNO"/>
+        <collection property="creatorList" column="IDNO"
+                    ofType="com.prd.approval.entity.EventCreator"
+                    select="com.prd.approval.dao.EventCreatorDAO.selectEventCreatorByTemplateId"/>
+    </resultMap>
+
+    <select id="selectEventAndOriginatorByCase" resultMap="tempMap">
+        SELECT e.EVENT_NAME,e.IDNO
+        FROM AP_EVENT e
+        WHERE IS_MODEL = 0
         <if test="billNo != null">
-            AND e.BILL_NO = #{billNo}
-        </if>
-        <if test="creator !=null">
-            AND c.CREATOR_NAME = #{creator}
+            AND BILL_NO = #{billNo}
         </if>
         <if test="status != null">
-            AND e.STATUS = #{status}
+            AND STATUS = #{status}
         </if>
     </select>
 
-
+    <!--useless-->
     <select id="selectEventAndCreatorAndCurrentProcess" resultMap="eventCreatorCurrentProcessMap">
-      SELECT IDNO as "eventId" ,CURRENT_STEP_ID as "currentStepId"
-      FROM AP_EVENT
-      WHERE IDNO = #{eventId}
+        SELECT IDNO as "eventId", CURRENT_STEP_ID as "currentStepId"
+        FROM AP_EVENT
+        WHERE IDNO = #{eventId}
     </select>
 
 

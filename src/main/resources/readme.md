@@ -125,11 +125,11 @@ get
 
 ## 根据用户ID查看是否有需要审批的事件
 post  
-<http://139.199.126.58:9000/checkMessage/{id}>
+<http://139.199.126.58:9000/user/checkMessage/{id}>
 
 ## 获取消息
 get  
-userId 指的是 张三李四王五这种 而非 101、102 之类
+userId 指的是 101、102
 <http://139.199.126.58:9000/user/getMessage/{userId}>
 
 ## 发送消息
@@ -137,8 +137,8 @@ post
 <http://139.199.126.58:9000/user/sendMessage>
 ```json
     {
-    	"fromUser":"fromUser",
-    	"toUser":"fromUser",
+    	"fromUser":"102",
+    	"toUser":"101",
     	"subject":"subject",
     	"content":"content"
     }
@@ -167,19 +167,26 @@ get
 <http://139.199.126.58:9000/user/event/{eventId}>
 
 
-## 3、根据事件ID获取审批（事件、发起人、阶段）
+## 3、根据ID（message id 或者 step staff id）获取审批（事件、发起人、阶段）
 获取数据：详细数据：包括事件、阶段、发起人（此部分在执行审批已有）
-get  
-<http://139.199.126.58:9000/user/event/detail/{eventId}>
-
+post  
+<http://139.199.126.58:9000/user/event/detail>
+queryMethod: message / stepStaff
+```json
+{
+	"queryId":"57703",
+	"queryMethod":"message"
+}
+```
 ## 查看审批记录（可以看到所有记录）
    1、需求：根据单据编号、发起人、事件状态等任意某个或多个数据查询审批记录
    获取数据：发起人、事件名[]
 post  
+status： 1新建  3 通过审批  4 被拒绝  5 被中止
 <http://139.199.126.58:9000/user/event/case>
 ```json
    {
-    	"billNo":"102",
+    	"billNo":"",
     	"creator":"101",
     	"status":""
     }
@@ -188,7 +195,7 @@ post
 ## 2、根据事件ID获取记录（此需求上部分已有）
    获取数据：事件名、描述、目标单据、发起人、创建日期
 
-<http://139.199.126.58:9000/user/event/allDetail/{eventId}>
+<http://139.199.126.58:9000/user/event/allDetail>
 ## 3、根据事件ID获取事件详情（事件、发起人、所有阶段、审批人）
    获取数据：事件名、描述、目标单据、发起人、创建日期
    事件阶段[]、

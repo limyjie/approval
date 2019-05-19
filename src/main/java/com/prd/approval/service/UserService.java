@@ -16,7 +16,7 @@ public interface UserService {
 
     ResponseUtil<List<Event>> checkMessage(String userId);
 
-    ResponseUtil<List<Message>> getMessage(String toUserId);
+    ResponseUtil<List<Message>> getMessage(String toUserId,String messageType);
 
     ResponseUtil<Message> sendMessage(Message message);
 
@@ -34,4 +34,5 @@ public interface UserService {
 
     ResponseUtil<Map<String,Object>> getEventAllProcessCreatorAuditor(String eventId);
 
+    ResponseUtil<Message> messageHaveRead(String messageId);
 }

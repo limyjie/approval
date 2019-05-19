@@ -123,14 +123,16 @@ get
 <http://139.199.126.58:9000/user/getTargetBill/{id}>
 
 
-## 根据用户ID查看是否有需要审批的事件
+## 登陆后，根据用户ID查看是否有未读消息
 post  
 <http://139.199.126.58:9000/user/checkMessage/{id}>
 
 ## 获取消息
 get  
-userId 指的是 101、102
-<http://139.199.126.58:9000/user/getMessage/{userId}>
+id 指的是用户id 101、102
+type : 0 或者 ap ，
+如果 对message type没有要求就不填，像这样：user/getMessage/?id=102
+<http://139.199.126.58:9000/user/getMessage?id=102&type=ap>
 
 ## 发送消息
 post  
@@ -167,15 +169,15 @@ get
 <http://139.199.126.58:9000/user/event/{eventId}>
 
 
-## 3、根据ID（message id 或者 step staff id）获取审批（事件、发起人、阶段）
-获取数据：详细数据：包括事件、阶段、发起人（此部分在执行审批已有）
+## 3、根据ID（message id / stepStaff id）获取审批（事件、发起人、阶段）
+获取数据：详细数据：包括事件、阶段、发起人
 post  
 <http://139.199.126.58:9000/user/event/detail>
-queryMethod: message / stepStaff
+queryMethod:stepStaff / message
 ```json
 {
 	"queryId":"57703",
-	"queryMethod":"message"
+	"queryMethod":"stepStaff"
 }
 ```
 ## 查看审批记录（可以看到所有记录）
@@ -203,3 +205,11 @@ status： 1新建  3 通过审批  4 被拒绝  5 被中止
    审批人、结果、审批日期、备注、部门的表格[]
 
 
+## 消息从未读变成已读
+post  
+
+<http://139.199.126.58:9000/user/message/haveRead>
+request body 里面直接写 message id
+```json
+57782
+```

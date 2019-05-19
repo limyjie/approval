@@ -20,13 +20,18 @@ public interface MessageDAO {
 
     int insertMessage(Message message);
 
-    int insertMessageList(List<Message> messageList);
 
-    List<Message> selectAllMessageToUser(String toUser);
+
+    List<Message> selectAllMessageToUser(@Param("toUser")String toUser,
+                                         @Param("messageType")String messageType);
 
     Message selectMessageByEventId(String eventId);
 
     Message selectMessageById(String messageId);
 
     ApMessage selectApMessageByApMessage(ApMessage apMessage);
+
+    int updateMessage(Message message);
+
+    ApMessage selectApMessageByMessageId(String toUserId);
 }

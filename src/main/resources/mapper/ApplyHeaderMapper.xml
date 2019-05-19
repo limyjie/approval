@@ -39,8 +39,9 @@
         <result column="COMMENTS" property="comments"/>
         <result column="EXPIRATION_DATE" property="expirationDate"/>
         <result column="PROJECT_NO" property="projectNo"/>
-        <association property="creatorName" column="CREATE_BY" select="selectCreatorNameByCreatorNo"/>
-        <association property="projectName" column="PROJECT_NO" select="selectProjectNameByPROJ"/>
+        <association column="APPLY_DEPA" property="applyDepartmentName" select="otherMapper.selectDepartmentNameById" javaType="String"/>
+        <association property="creatorName" column="CREATE_BY" select="otherMapper.selectPersonNameById" javaType="String"/>
+        <association property="projectName" column="PROJECT_NO" select="otherMapper.selectProjectNameByPROJ" javaType="String"/>
         <collection property="applyListList"
                     column="APPLY_NO"
                     javaType="ArrayList"
@@ -54,16 +55,9 @@
         WHERE APPLY_NO = #{id}
     </select>
 
-    <select id="selectProjectNameByPROJ" resultType="String" parameterType="String">
-        SELECT NAMA
-        FROM TFNC054
-        WHERE PROJ = #{projectId}
-    </select>
 
-    <select id="selectCreatorNameByCreatorNo" parameterType="String" resultType="String">
-        SELECT NAMA
-        FROM TCCOM001
-        WHERE EMNO = #{userId}
-    </select>
+
+
+
 
 </mapper>

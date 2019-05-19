@@ -62,6 +62,7 @@ public class ApplyList {
     private String kltc;
     /*以下属性在数据库中不存在，但仍需用到*/
     private String projectName;
+    /*库房名*/
     private String warehouseName;
     //物料名
     private String itemName;
@@ -69,10 +70,28 @@ public class ApplyList {
     //单位名
     private String unitName;
 
+    private String creatorName;
+
+    private String purchaseStaffName;
+
     public ApplyList() {
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
 
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getPurchaseStaffName() {
+        return purchaseStaffName;
+    }
+
+    public void setPurchaseStaffName(String purchaseStaffName) {
+        this.purchaseStaffName = purchaseStaffName;
+    }
 
     public String getProjectName() {
         return projectName;
@@ -465,6 +484,8 @@ public class ApplyList {
                 ", itemName='" + itemName + '\'' +
                 ", whCode='" + whCode + '\'' +
                 ", unitName='" + unitName + '\'' +
+                ", creatorName='" + creatorName + '\'' +
+                ", purchaseStaffName='" + purchaseStaffName + '\'' +
                 '}';
     }
 }

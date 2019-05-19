@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="otherMapper">
+
+   <select id="selectPersonNameById" parameterType="String" resultType="String">
+       SELECT NAMA
+       FROM TCCOM001
+       WHERE EMNO = #{userId}
+   </select>
+
+    <select id="selectDepartmentNameById" parameterType="String" resultType="String">
+        SELECT DSCA
+        FROM FI023
+        WHERE DEPA = #{id}
+    </select>
+
+    <select id="selectProjectNameByPROJ" resultType="String" parameterType="String">
+        SELECT NAMA
+        FROM TFNC054
+        WHERE PROJ = #{projectId}
+    </select>
+</mapper>

@@ -47,9 +47,11 @@ public class UserController {
         return userService.checkMessage(userID);
     }
 
-    @GetMapping("/getMessage/{userId}")
-    public ResponseUtil<List<Message>> getMessage(@PathVariable("userId") String userId) {
-        return userService.getMessage(userId);
+    @GetMapping("/getMessage")
+    public ResponseUtil<List<Message>> getMessage(
+            @RequestParam(value = "id",required = true) String userId,
+            @RequestParam(value = "type",required = false)String messageType) {
+        return userService.getMessage(userId,messageType);
     }
 
 
@@ -132,6 +134,12 @@ public class UserController {
     @GetMapping("/event/allDetail/{stepStaffId}")
     public ResponseUtil<Map<String, Object>> getEventAllProcessCreatorAuditor(@PathVariable("stepStaffId") String stepStaffId) {
         return userService.getEventAllProcessCreatorAuditor(stepStaffId);
+    }
+
+
+    @PostMapping("/message/haveRead")
+    public ResponseUtil<Message> messageHaveRead(@RequestBody String messageId){
+        return userService.messageHaveRead(messageId);
     }
 
 

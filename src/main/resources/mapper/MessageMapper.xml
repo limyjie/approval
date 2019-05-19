@@ -19,21 +19,23 @@
         <result column="HAVEALERT" property="haveAlert"/>
         <result column="HAVEDONE" property="haveDone"/>
         <result column="MESSAGE_TYPE" property="messageType"/>
+        <association property="fromUserName" select="otherMapper.selectPersonNameById"
+                     column="FROMUSER" javaType="String"/>
+        <association property="toUserName" select="otherMapper.selectPersonNameById"
+                     column="TOUSER" javaType="String"/>
     </resultMap>
 
-    <select id="selectAllApprovalMessage" resultMap="messageMap">
-        SELECT
-        <include refid="messageColumn"/>
-        FROM MESSAGE
-        WHERE MESSAGE_TYPE = 'ap'
-    </select>
 
-    <select id="selectAllMessageToUser" parameterType="String" resultMap="messageMap">
+    <select id="selectAllMessageToUser" resultMap="messageMap">
         SELECT
         <include refid="messageColumn"/>
         FROM MESSAGE
-        WHERE MESSAGE_TYPE = 'ap'
-        AND TOUSER = #{userId}
+        WHERE TOUSER = #{toUser}
+        AND HAVEREAD = '0'
+        <if test="messageType != null">
+            AND MESSAGE_TYPE = #{messageType}
+        </if>
+
     </select>
 
     <!--SERA : toUser 收到的消息的序列号 每次在最大值的基础上加一
@@ -68,19 +70,29 @@
     </insert>
 
     <select id="selectMessageByEventId" parameterType="String" resultMap="messageMap">
-        SELECT
-        <include refid="messageColumn"/>
-        FROM AP_MESSAGE,MESSAGE
+        SELECT MESSAGE.IDNO,
+               FROMUSER,
+               TOUSER,
+               SERA,
+               SUBJECT,
+               CONTENT,
+               SENDTIME,
+               HAVEREAD,
+               HAVEALERT,
+               HAVEDONE,
+               MESSAGE_TYPE
+        FROM AP_MESSAGE,
+             MESSAGE
         WHERE AP_MESSAGE.EVENT_ID = #{eventId}
-        AND AP_MESSAGE.MESSAGE_ID = MESSAGE.IDNO
+          AND AP_MESSAGE.MESSAGE_ID = MESSAGE.IDNO
     </select>
 
     <select id="selectApMessageByApMessage"
             parameterType="com.prd.approval.entity.ApMessage"
             resultType="com.prd.approval.entity.ApMessage">
-        SELECT MESSAGE.IDNO  "id",MESSAGE_ID  "messageId",
-        EVENT_ID  "eventId",STEP_ID  "stepId",STAFF_NO  "staffNo",
-        STAFF_ID  "staffId"
+        SELECT MESSAGE.IDNO "id",MESSAGE_ID "messageId",
+        EVENT_ID "eventId",STEP_ID "stepId",STAFF_NO "staffNo",
+        STAFF_ID "staffId"
         FROM AP_MESSAGE,MESSAGE
         WHERE
         <choose>
@@ -104,27 +116,21 @@
         WHERE IDNO =#{messageId}
     </select>
 
-
-    <insert id="insertMessageList" parameterType="java.util.List">
-
-        <foreach collection="list" item="item" separator=";" close=";">
-            INSERT INTO MESSAGE(IDNO, FROMUSER, TOUSER, SERA,
-                                  SUBJECT, CONTENT, SENDTIME,HAVEREAD)
-
-            SELECT  #{item.id}   ,
-                    #{item.fromUser}  ,
-                    #{item.toUser}   ,
-                    NVL(MAX(SERA)+1,1)  ,
-                    #{item.subject}  ,
-                    #{item.content} ,
-                    #{item.sendTime} ,
-                    #{item.haveRead}
-            FROM MESSAGE
-        </foreach>
-    </insert>
-
-
-
+    <update id="updateMessage" parameterType="com.prd.approval.entity.Message">
+        UPDATE MESSAGE
+        <set>
+            <if test="haveRead != null">
+                HAVEREAD = #{haveRead}
+            </if>
+            <if test="haveAlert != null">
+                HAVEALERT = #{haveAlert}
+            </if>
+            <if test="haveDone != null">
+                HAVEDONE = #{haveDone}
+            </if>
+        </set>
+        WHERE IDNO = #{id}
+    </update>
 
 
 </mapper>

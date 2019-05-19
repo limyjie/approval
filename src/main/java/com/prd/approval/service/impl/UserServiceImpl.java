@@ -67,19 +67,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseUtil<List<Event>> checkMessage(String userId) {
 
-        List<Event> eventList = templateDAO.selectTodoEventListByUserId(userId);
-
-        if (eventList.size() == 0) {
+        //List<Event> eventList = templateDAO.selectTodoEventListByUserId(userId);
+        List<Message> messageList = messageDAO.selectAllMessageToUser(userId, null);
+        if (messageList.size() == 0) {
             return new ResponseUtil<>(1, "暂无消息");
         }
-        return new ResponseUtil<>(1, "您有新的消息", eventList);
+        return new ResponseUtil<>(1, "您有新的消息");
 
     }
 
     @Override
-    public ResponseUtil<List<Message>> getMessage(String toUserId) {
-
-        List<Message> messageList = messageDAO.selectAllMessageToUser(toUserId);
+    public ResponseUtil<List<Message>> getMessage(String toUserId, String messageType) {
+        //  String stepStaffId = messageDAO.selectApMessageByUserId(toUserId);
+        List<Message> messageList = messageDAO.selectAllMessageToUser(toUserId, messageType);
         if (messageList.size() == 0) {
             return new ResponseUtil<>(0, "消息为空");
         }
@@ -158,20 +158,12 @@ public class UserServiceImpl implements UserService {
 /*
  event: status  1 新建， 3 通过审批，  4 被拒绝， 5 被中止
  process :status 1 新建，2 正在执行(开启),3 通过，4 = 被拒绝
-    逻辑：对审批事件A 的 当前阶段a 执行审批，
-         如果审批结果result 为通过，则将a的剩余审批次数-1，
-            如果a的剩余审批次数为0 ，则a审批结束，更新a的状态，
-                寻找下一审批阶段b，
-                    如果b == null ，说明审批阶段已经全部执行结束
-                    否则 根据b将A的当前阶段和当前阶段的次序更新
-            否则 继续执行a的审批
-         如果审批结果result 为不通过，则将a的状态设置为4，A的状态设置为4
+    逻辑： 详见doc.md
  */
         switch (result) {
             case "pass": {
                 //times remain -- , status = 3
                 int remain = current.getTimesRemain() - 1;
-                current.setTimesRemain(remain);
                 current.setStatus("2");
                 //审批备注
                 stepStaff.setApComment(remarks);
@@ -182,7 +174,8 @@ public class UserServiceImpl implements UserService {
                 stepStaff.setApDate(new Timestamp(System.currentTimeMillis()));
                 stepStaffDAO.updateStepStaffByStepIdAndStaffId(stepStaff);
                 //if times remain == 0 , update current process
-                if (remain == 0) {
+                if (remain <= 0) {
+                    current.setTimesRemain(0);
                     current.setStatus("3");
                     Process next = processDAO.selectNextProcess(current);
                     if (next == null) {
@@ -208,13 +201,13 @@ public class UserServiceImpl implements UserService {
                 // 1 = 未执行，2 = 已执行(通过或拒绝)
                 stepStaff.setStatus("2");
                 stepStaff.setApDate(new Timestamp(System.currentTimeMillis()));
-                current.setTimesRemain(current.getTimesRemain()-1);
+                current.setTimesRemain(current.getTimesRemain() - 1);
                 int personRemainNum = stepStaffDAO.selectStepUnApprovalPersonNumber(stepStaff.getId());
-                if(current.getTimesRemain()< personRemainNum){
+                if (current.getTimesRemain() < personRemainNum) {
                     current.setStatus("4");
                     event.setStatus("4");
                     // 不通过时，检查：当事件的剩余审批次数 小于 事件需要通过的次数时 ，发消息给事件发起人
-                    sendMessageToEventCreatorForReject(event,auditorId);
+                    sendMessageToEventCreatorForReject(event, auditorId);
                 }
 
                 stepStaffDAO.updateStepStaffByStepIdAndStaffId(stepStaff);
@@ -230,9 +223,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseUtil<Map<String,Object>> getTargetBill(String applyNo) {
+    public ResponseUtil<Map<String, Object>> getTargetBill(String applyNo) {
 
-        Map<String,Object> resultMap = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
+        Map<String, Object> resultMap = applyHeaderDAO.selectApplyHeaderByApplyNo(applyNo);
 
         if (resultMap != null) {
             return new ResponseUtil<>(1, "目标单据类型查询成功", resultMap);
@@ -257,71 +250,47 @@ public class UserServiceImpl implements UserService {
         creator = creator == null ? null : creator.trim().isEmpty() ? null : creator;
         eventStatus = eventStatus == null ? null : eventStatus.trim().isEmpty() ? null : eventStatus;
 
-        List<Map<String,Object>> resultMapList = templateDAO.selectEventByCase(billNo,creator, eventStatus);
+        List<Map<String, Object>> resultMapList = templateDAO.selectEventByCase(billNo, creator, eventStatus);
 
         if (resultMapList.size() == 0) {
             return new ResponseUtil<>(1, "查询成功，结果为空");
         }
         return new ResponseUtil<>(1, "查询成功", resultMapList);
 
-
-        /* List<Map<String, Object>> resultMapList = new LinkedList<>();
-        if (creator == null) {
-            for (Event event : eventList) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("event", event);
-                List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
-                map.put("creatorList", eventCreatorList);
-                resultMapList.add(map);
-            }
-        } else {
-            for (Event event : eventList) {
-                List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
-                for(EventCreator eventCreator){
-                    if(eventCreator.getId())
-                }
-            }
-
-        }*/
     }
 
     @Override
     public ResponseUtil<Map<String, Object>> getEventProcessCreator(Map<String, String> map) {
         String queryMethod = map.get("queryMethod");
         String queryId = map.get("queryId");
-        Map<String, Object> resultMap = null;
+        Map<String, Object> resultMap = new HashMap<>();
         if ("stepStaff".equals(queryMethod)) {
-            resultMap = new HashMap<>();
 
             StepStaff stepStaff = stepStaffDAO.selectByStepStaffId(queryId);
             Process process = processDAO.selectProcessById(stepStaff.gethId());
             Event event = templateDAO.selectTemplateById(process.getEventId());
-            Message message = messageDAO.selectMessageByEventId(event.getId());
 
             resultMap.put("event", event);
             resultMap.put("currentStep", process);
-            resultMap.put("message", message);
             resultMap.put("stepStaff", stepStaff);
 
         } else if ("message".equals(queryMethod)) {
-            resultMap = new HashMap<>();
-
 
             ApMessage apMessageParam = new ApMessage();
             apMessageParam.setMessageId(queryId);
-
-            Message message = messageDAO.selectMessageById(queryId);
-            System.out.println(message);
             ApMessage apMessage = messageDAO.selectApMessageByApMessage(apMessageParam);
             System.out.println(apMessage);
             Event event = templateDAO.selectTemplateById(apMessage.getEventId());
             System.out.println(event);
-            Process process = processDAO.selectProcessById(event.getCurrentStepId());
-            StepStaff stepStaff = stepStaffDAO.selectByStepIdAndStaffId(event.getCurrentStepId(), apMessage.getStaffNo());
 
+            Process process = processDAO.selectProcessById(event.getCurrentStepId());
+            StepStaff param = new StepStaff();
+            param.sethId(event.getCurrentStepId());
+            param.setSortNo(event.getSortNo());
+            StepStaff stepStaff = stepStaffDAO.selectByStepStaff(param);
+            System.out.println(stepStaff);
             resultMap.put("event", event);
             resultMap.put("currentStep", process);
-            resultMap.put("message", message);
             resultMap.put("stepStaff", stepStaff);
 
 
@@ -362,18 +331,30 @@ public class UserServiceImpl implements UserService {
         return new ResponseUtil<>(1, "查询成功", resultMap);
     }
 
+    @Override
+    public ResponseUtil<Message> messageHaveRead(String messageId) {
+        Message message = new Message();
+        message.setId(messageId);
+        message.setHaveRead("1");
+        int effect = messageDAO.updateMessage(message);
+        if (effect != 0) {
+            return new ResponseUtil<>(1, "修改成功");
+        }
+        return new ResponseUtil<>(0, "修改失败");
+    }
 
-    private void sendMessageToEventCreatorForReject(Event event,String auditorId){
-        List<EventCreator> eventCreatorList  = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
+
+    private void sendMessageToEventCreatorForReject(Event event, String auditorId) {
+        List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getId());
         List<Message> messageList = new LinkedList<>();
 
-        for(EventCreator eventCreator:eventCreatorList){
+        for (EventCreator eventCreator : eventCreatorList) {
             Message message = new Message();
             message.setId(IDNOUtil.getIDNO());
             message.setFromUser(auditorId);
             message.setToUser(eventCreator.getCreatorNo());
             message.setSubject("采购申请立项[审批通知]");
-            message.setContent("审批事件 "+event.getId()+" 被拒绝");
+            message.setContent("审批事件 " + event.getId() + " 被拒绝");
             message.setSendTime(new Timestamp(System.currentTimeMillis()));
             message.setHaveRead("0");
             message.setMessageType("0");
@@ -382,35 +363,3 @@ public class UserServiceImpl implements UserService {
     }
 
 }
- /* optionalEventId.ifPresent((value)->{
-           System.out.println(optionalEventId.map(templateDAO::selectTemplateById).get().toString());
-       });*/
-
-
-        /*
-        如果 optionalEventId 的 value 存在，则执行templateDAO的selectTemplateById 方法，
-        map :
-        If a value is present,
-        apply the provided mapping function to it,
-        and if the result is non-null,
-        return an Optional describing the result.
-        Otherwise return an empty Optional.
-         */
-// System.out.println(optionalEventId.map(templateDAO::selectTemplateById));
-      /*  Optional<String> optionalEventId = Optional.ofNullable(eventId);
-        Optional<Event> optionalEvent = optionalEventId.map(templateDAO::selectTemplateById);
-        Optional<String> optionalCurrentStepId = optionalEvent.map(Event::getCurrentStepId);
-        Optional<Process> optionalProcess = optionalCurrentStepId.map(processDAO::selectProcessById);
-        optionalEventId.ifPresent(
-                ()-{}
-        );*/
-
-
-//System.out.println(optionalEventId.map(templateDAO::selectTemplateById).map(Event::getCurrentStepId).map(processDAO::selectProcessById));
-//  Event event = templateDAO.selectTemplateById(eventId);
-// String current  = event.getCurrentStepId();
-// Process currentProcess = processDAO.selectProcessById(current);
-// Optional<Event>  optionalEvent = Optional.ofNullable(templateDAO.selectTemplateById(eventId));
-
-
-// Optional<Process> optionalProcess =  optionalEvent.flatMap(processDAO::selectProcessById())

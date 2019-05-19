@@ -85,6 +85,8 @@
         <result column="ATTRIBUTE1" property="attribute1"/>
         <result column="ATTRIBUTE2" property="attribute2"/>
         <result column="ATTRIBUTE3" property="attribute3"/>
+        <association property="purchaseStaffName" column="PURCHASE_STAFF" select="otherMapper.selectPersonNameById"/>
+        <association property="creatorName" column="CREATE_BY" select="otherMapper.selectPersonNameById"/>
         <association property="whCode" column="WH_ID" select="selectWarehouseCode"/>
         <association property="warehouseName" column="WH_ID" select="selectWarehouseName"/>
         <association property="itemName" column="ITEM" select="selectItemName"/>

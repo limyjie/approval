@@ -27,6 +27,9 @@ public class Message {
     private String haveAlert;
     private String haveDone;
     private String messageType;
+    /*以下属性数据库中不存在，但仍需用到*/
+    private String toUserName;
+    private String fromUserName;
 
     public Message() {
     }
@@ -45,7 +48,25 @@ public class Message {
                 ", haveAlert='" + haveAlert + '\'' +
                 ", haveDone='" + haveDone + '\'' +
                 ", messageType='" + messageType + '\'' +
+                ", toUserName='" + toUserName + '\'' +
+                ", fromUserName='" + fromUserName + '\'' +
                 '}';
+    }
+
+    public String getToUserName() {
+        return toUserName;
+    }
+
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
+    }
+
+    public String getFromUserName() {
+        return fromUserName;
+    }
+
+    public void setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
     }
 
     public String getId() {

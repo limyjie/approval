@@ -84,6 +84,9 @@
             <if test="apComment != null">
                 AP_COMMENT = #{apComment},
             </if>
+            <if test="apDate != null">
+                AP_DATE = #{apDate}
+            </if>
         </set>
         WHERE HID = #{hId} AND STAFF_NO = #{staffNo}
     </update>
@@ -99,5 +102,47 @@
         SELECT COUNT(HID)
         FROM AP_STEP_STAFF
         WHERE HID = #{stepId}
+    </select>
+
+    <select id="selectByStepStaffId" parameterType="String" resultMap="stepStaffMap">
+        SELECT
+        <include refid="stepStaffColumn"/>
+        FROM AP_STEP_STAFF
+        WHERE IDNO =#{id}
+    </select>
+
+    <select id="selectByStepStaff" parameterType="com.prd.approval.entity.StepStaff" resultMap="stepStaffMap">
+        SELECT
+        <include refid="stepStaffColumn"/>
+        FROM AP_STEP_STAFF
+        WHERE 1=1
+        <if test="id != null">
+            AND IDNO = #{id}
+        </if>
+        <if test="hId != null">
+            AND HID = #{hId}
+        </if>
+        <if test="status != null">
+            AND STATUS = #{status}
+        </if>
+        <if test="sortNo != null">
+            AND SORT_NO = #{sortNo}
+        </if>
+        <if test="staffNo != null">
+            AND STAFF_NO = #{staffNo}
+        </if>
+        <if test="staffName != null">
+            AND STAFF_NAME = #{staffName}
+        </if>
+        <if test="staffDepa != null">
+            AND STAFF_DEPA = #{staffDepa}
+        </if>
+        <if test="staffDepaName != null">
+            AND STAFF_DEPA_NAME = #{staffDepaName}
+        </if>
+        <if test="apResult != null">
+            AND AP_RESULT = #{apResult}
+        </if>
+
     </select>
 </mapper>

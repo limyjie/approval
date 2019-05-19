@@ -10,10 +10,15 @@ import com.prd.approval.entity.Auditor;
 import com.prd.approval.service.AuditorService;
 import com.prd.approval.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/*
+*  service : 把该类注入到spring 容器中
+*
+* */
 @Service
 public class AuditorServiceImpl implements AuditorService {
 

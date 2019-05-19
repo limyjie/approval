@@ -1,7 +1,8 @@
 /**
  * Author: lin
  * Date: 2019/3/25 13:31
- */
+ *//*
+
 package com.prd.approval.config;
 
 import org.springframework.context.annotation.Bean;
@@ -13,25 +14,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-/*@Configuration
-@EnableWebMvc
+*/
+/*
 
-不需要此类
+
+*//*
+
 
 */
+/*@Configuration*//*
+
 public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
         super.addResourceHandlers(registry);
     }
 
-    @Bean
-    public ViewResolver viewResolver() {
-        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
-        viewResolver.setViewClass(InternalResourceView.class);
-        return viewResolver;
-    }
-
-}
+}*/

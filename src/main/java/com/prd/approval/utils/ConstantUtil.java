@@ -19,6 +19,8 @@ public class ConstantUtil {
     private static Properties properties;
     private static final String RELATIVE_PATH = "static/Constant.properties";
     private static final String KEY = "userStepCode";
+
+    /*private 修饰符：不希望该类被实例化*/
     private ConstantUtil() {
     }
 

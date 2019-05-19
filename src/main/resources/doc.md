@@ -109,7 +109,12 @@
 
 
 
+# 其他
 
+spring boot  默认 模板 引擎：thymeleaf，
+需要我们把需要被该模板引擎渲染的视图（html页面或者JSP）放到resources/templates/这里
+
+需要被渲染的html页面加上：<html xmlns:th="http://www.thymeleaf.org">
 
 
 

@@ -282,7 +282,9 @@ public class UserServiceImpl implements UserService {
             System.out.println(apMessage);
             Event event = templateDAO.selectTemplateById(apMessage.getEventId());
             System.out.println(event);
-
+            if(event == null){
+                return new ResponseUtil<>(0,"该目标单据数据错误");
+            }
             Process process = processDAO.selectProcessById(event.getCurrentStepId());
             StepStaff param = new StepStaff();
             param.sethId(event.getCurrentStepId());
@@ -361,5 +363,6 @@ public class UserServiceImpl implements UserService {
             messageDAO.insertMessage(message);
         }
     }
+
 
 }

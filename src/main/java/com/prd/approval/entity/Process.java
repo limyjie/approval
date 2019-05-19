@@ -16,10 +16,13 @@ import java.sql.Timestamp;
  */
 public class Process implements Serializable{
 
+    private static final long serialVersionUID = 210695586686506468L;
+
     /*阶段代码，对应数据库中的IDNO字段 用IDNOUtil自生成*/
     private String Id;
-    /*阶段名*/
-   // @NotBlank(message = "阶段名不能为空")
+    /*阶段名
+    * */
+    //@NotBlank(message = "阶段名不能为空")
     private String stepName;
     /*阶段描述*/
    // @NotBlank(message = "阶段描述不能为空")
@@ -28,7 +31,7 @@ public class Process implements Serializable{
 //    @Min(value = 1 ,message = "最小值为1")
     private Integer timesCount;
     /*创建人*/
-   // @NotNull(message = "创建人不能为空")
+    @NotNull(message = "创建人不能为空")
     private String createBy;
     /*创建日期*/
     private Timestamp createDate;

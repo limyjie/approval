@@ -7,9 +7,8 @@ package com.prd.approval.aspect;
 
 import com.alibaba.fastjson.JSON;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,8 +20,9 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
+
 @Aspect
+@Component
 public class HttpAspect {
 
 
@@ -36,6 +36,9 @@ public class HttpAspect {
      */
     @Before("point()")
     public void beforeExecution() {
+
        new Thread(new HttpLogTask((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())).start();
     }
+
+
 }

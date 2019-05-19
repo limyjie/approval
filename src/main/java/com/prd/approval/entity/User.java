@@ -5,6 +5,9 @@
 package com.prd.approval.entity;
 
 
+import com.prd.approval.utils.ConstantUtil;
+
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /*
@@ -13,12 +16,12 @@ import java.io.Serializable;
 * */
 public class User implements Serializable {
 
+
     private String id;
     private String userName;
     private String password;
 
     public User() {
-
     }
 
     @Override

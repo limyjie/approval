@@ -24,6 +24,13 @@ import java.util.List;
 @RequestMapping("/auditor")
 public class AuditorController {
 
+    /*
+    *
+    * autowired  : 到 spring 容器中寻找id 为 auditorService 的bean（对象），
+    * 找到之后把被该注解修饰的引用指向这个bean
+    *
+    * */
+
     @Autowired
     private AuditorService auditorService;
 

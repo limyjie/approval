@@ -15,14 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/*允许跨域请求*/
 @CrossOrigin(origins = "*", maxAge = 3600)
+/*返回JSON*/
 @RestController
+/*此类接收的请求都以/user 开始 */
 @RequestMapping("/user")
 public class UserController {
 
@@ -30,7 +34,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    //@PostMapping("/login")
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ResponseUtil<Map<String, String>> login(@RequestBody User webUser) {
 
         return userService.login(webUser);
@@ -68,13 +73,14 @@ public class UserController {
     // 执行审批
     @PostMapping("/doApproval")
     public ResponseUtil<Event> doApproval(@RequestBody Map<String, String> map) {
+        System.out.println("map:  "+map);
 
         String eventId = map.get("eventId");
         String result = map.get("result");
         String remarks = map.get("remarks");
         String auditorId = map.get("auditorId");
         if(eventId == null || eventId.trim().isEmpty() ||
-                result == null || result.trim().isEmpty() ||
+                result == null || result.trim().    isEmpty() ||
                 auditorId == null || auditorId.trim().isEmpty()){
             return new ResponseUtil<>(0,"参数不能为空");
         }

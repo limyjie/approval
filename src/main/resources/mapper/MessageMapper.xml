@@ -31,7 +31,6 @@
         <include refid="messageColumn"/>
         FROM MESSAGE
         WHERE TOUSER = #{toUser}
-        AND HAVEREAD = '0'
         <if test="messageType != null">
             AND MESSAGE_TYPE = #{messageType}
         </if>

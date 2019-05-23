@@ -76,6 +76,7 @@ public class TemplateServiceImpl implements TemplateService {
         //服务器端自动填入的数据
         event.setId(IDNOUtil.getIDNO());
         event.setIsModel(1);
+        event.setStatus("1");
         event.setCreateDate(new Timestamp(System.currentTimeMillis()));
         //单据类型 ap_event_bill
         /* 若审批模板 isActive == 1 为启用状态，
@@ -120,8 +121,8 @@ public class TemplateServiceImpl implements TemplateService {
         EventStepRelation eventStepRelation;
         for (int i = 0; i < processIdList.size(); i++) {
             Process process = processDAO.selectProcessById(processIdList.get(i));
-            if(process == null){
-                return new ResponseUtil<>(0,"审批阶段 "+processIdList.get(i)+" 不存在");
+            if (process == null) {
+                return new ResponseUtil<>(0, "审批阶段 " + processIdList.get(i) + " 不存在");
             }
             eventStepRelation = new EventStepRelation();
             eventStepRelation.setId(IDNOUtil.getIDNO());
@@ -167,17 +168,17 @@ public class TemplateServiceImpl implements TemplateService {
 
 
     @Override
-    public ResponseUtil<Map<String,Object>> findTemplate(String templateId) {
+    public ResponseUtil<Map<String, Object>> findTemplate(String templateId) {
         if (templateId == null || templateId.trim().isEmpty()) {
             return new ResponseUtil<>(0, "审批模板编码不能为空");
         }
         Event event = templateDAO.selectTemplateById(templateId);
         List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(templateId);
         List<Process> processList = processDAO.selectProcessBelongTemplate(templateId);
-        Map<String,Object> map = new HashMap<>();
-        map.put("template",event);
-        map.put("originatorList",eventCreatorList);
-        map.put("processList",processList);
+        Map<String, Object> map = new HashMap<>();
+        map.put("template", event);
+        map.put("originatorList", eventCreatorList);
+        map.put("processList", processList);
 
         if (event == null) {
             return new ResponseUtil<>(1, "该审批模板不存在");
@@ -198,9 +199,18 @@ public class TemplateServiceImpl implements TemplateService {
         }
         //模板名不能一样
         //防止重复插入
-        if (templateDAO.selectTemplateByNameAndID(event.getId(),event.getEventName()) != null) {
+        if (templateDAO.selectTemplateByNameAndID(event.getId(), event.getEventName()) != null) {
             return new ResponseUtil<>(0, "重复的审批模板名");
         }
+
+         /*
+        修改单据类型
+        因为目前只有 "采购申请立项" 这一单据类型，
+        所以如果该单据类型已被处于激活状态的模板占用，则直接抛出错误
+        实际上不需要修改任何数据
+         */
+        ResponseUtil responseUtil = isEventBillUsed(event);
+        if (responseUtil.getStatus() == 0) return responseUtil;
 
         int result = templateDAO.updateTemplate(event);
         if (result == 0) {
@@ -212,19 +222,12 @@ public class TemplateServiceImpl implements TemplateService {
         EventCreator eventCreator;
         Auditor originator;
         for (int i = 0; i < originatorIdList.size(); i++) {
-            System.out.println("out "+originatorIdList.get(i));
+            //System.out.println("out "+originatorIdList.get(i));
             originator = auditorDAO.selectAuditorById(originatorIdList.get(i));
             if (originator == null) {
                 return new ResponseUtil<>(0, "发起人 " + originatorIdList.get(i) + " 不存在");
             }
-            eventCreator = new EventCreator();
-            eventCreator.setId(IDNOUtil.getIDNO());
-            eventCreator.setHid(event.getId());
-            eventCreator.setSortNo(i + 1);
-            eventCreator.setCreatorNo(originator.getId());
-            eventCreator.setCreatorName(originator.getName());
-            eventCreator.setCreatorDepartment(originator.getDepartment());
-            System.out.println(eventCreator.toString());
+            eventCreator = createNewEventCreator(event.getId(),event.getSortNo(),originator.getId(),originator.getName(),originator.getDepartment());
             eventCreatorList.add(eventCreator);
         }
         eventCreatorDAO.deleteEventCreatorByEventId(event.getId());
@@ -246,15 +249,6 @@ public class TemplateServiceImpl implements TemplateService {
         eventStepRelationDAO.deleteRelationByEventId(event.getId());
         eventStepRelationDAO.insertRelationList(eventStepRelationList);
 
-
-        /*
-        修改单据类型
-        因为目前只有 "采购申请立项" 这一单据类型，
-        所以如果该单据类型已被处于激活状态的模板占用，则直接抛出错误
-        实际上不需要修改任何数据
-         */
-        ResponseUtil responseUtil = isEventBillUsed(event);
-        if (responseUtil.getStatus() == 0) return responseUtil;
 
         return new ResponseUtil<>(1, "审批模板修改成功");
     }
@@ -280,28 +274,32 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public ResponseUtil<List<Map<String,Object>>> getEventByStatusAndUser(String status,String userId) {
-        List<Event> eventList = templateDAO.selectEventByStatusAndUser(status,userId);
-        List<Map<String,Object>> mapList = new ArrayList<>();
-        Map<String,Object> map;
-        for(Event event:eventList){
+    public ResponseUtil<List<Map<String, Object>>> getEventByStatusAndUser(String status, String userId) {
+        List<Event> eventList = templateDAO.selectEventByStatusAndUser(status, userId);
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        Map<String, Object> map;
+        for (Event event : eventList) {
             String currentStepName = processDAO.selectProcessById(event.getCurrentStepId()).getStepName();
-            String stepStaffId = stepStaffDAO.selectByStepIdAndStaffId(event.getCurrentStepId(),userId).getId();
+            String stepStaffId = stepStaffDAO.selectByStepIdAndStaffId(event.getCurrentStepId(), userId).getId();
             map = new HashMap<>();
-            map.put("event",event);
-            map.put("stepStaffId",stepStaffId);
-            map.put("currentStepName",currentStepName);
+            map.put("event", event);
+            map.put("stepStaffId", stepStaffId);
+            map.put("currentStepName", currentStepName);
             mapList.add(map);
         }
-        return new ResponseUtil<>(1,"查询事件成功",mapList);
+        if(mapList.isEmpty()){
+            return new ResponseUtil<>(0, "查询结果为空");
+        }
+        return new ResponseUtil<>(1, "查询事件成功", mapList);
     }
 
     /**
      * <p>
-     *     如果 event 的 isActive == 1
-     *     如果 pur_apply_pre 此单据类型已被占用，则返回占用此单据类型的 模板，否则null
+     * 如果 event 的 isActive == 1
+     * 如果 pur_apply_pre 此单据类型已被占用，则返回占用此单据类型的 模板，否则null
      *
      * </p>
+     *
      * @param event
      * @return the Event which already use pur_apply_pre,null if pur_apply_pre
      */
@@ -313,9 +311,21 @@ public class TemplateServiceImpl implements TemplateService {
             }
             event = templateDAO.selectActiveTemplateByBillCode("pur_apply_pre");
             if (event != null) {
-                return new ResponseUtil<>(0, "该单据类型已审批模板"+event.getId()+"占用",event);
+                return new ResponseUtil<>(0, "该单据类型已审批模板" + event.getId() + "占用", event);
             }
         }
         return new ResponseUtil<>(1, "单据类型正确");
+    }
+
+
+    private EventCreator createNewEventCreator(String eventId,int sortNo,String creatorNo,String creatorName,String creatorDepartment) {
+        EventCreator eventCreator = new EventCreator();
+        eventCreator.setId(IDNOUtil.getIDNO());
+        eventCreator.setHid(eventId);
+        eventCreator.setSortNo(sortNo);
+        eventCreator.setCreatorNo(creatorNo);
+        eventCreator.setCreatorName(creatorName);
+        eventCreator.setCreatorDepartment(creatorDepartment);
+        return eventCreator;
     }
 }

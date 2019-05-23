@@ -14,7 +14,7 @@
 
 
     <select id="selectUserByIdAndPassword" resultType="java.util.Map">
-        SELECT USERID.LOGINID, FULLNAME, PASSWD, TCCOM001.EMNO as "USERID"
+        SELECT USERID.LOGINID, FULLNAME, TCCOM001.EMNO as "USERID"
         FROM USERID,
              TCCOM001
         WHERE USERID.LOGINID = #{id}

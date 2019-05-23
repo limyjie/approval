@@ -34,6 +34,12 @@
     </select>
 
 
+    <select id="selectDepartmentNameById" parameterType="String" resultType="String">
+        SELECT DSCA
+        FROM FI023
+        WHERE DEPA =#{id}
+    </select>
+
 
 
 </mapper>

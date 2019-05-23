@@ -154,7 +154,9 @@ public class UserServiceImpl implements UserService {
 
         Process current = processDAO.selectProcessById(event.getCurrentStepId());
         StepStaff stepStaff = stepStaffDAO.selectByStepIdAndStaffId(current.getId(), auditorId);
-
+        if(stepStaff == null){
+            return new ResponseUtil<>(0,"数据异常，找不到审批阶段"+current.getId()+" 和审批人"+auditorId+" 对应的审批步骤(stepStaff)");
+        }
 /*
  event: status  1 新建， 3 通过审批，  4 被拒绝， 5 被中止
  process :status 1 新建，2 正在执行(开启),3 通过，4 = 被拒绝

@@ -59,6 +59,7 @@ public interface TemplateDAO {
 
     default List<Map<String, Object>> selectEventByCase(String billNo, String creator, String status) {
         List<Map<String, Object>> mapList = this.selectEventAndOriginatorByCase(billNo, creator, status);
+        System.out.println(mapList);
         List<Map<String, Object>> finalList = new LinkedList<>();
         List<EventCreator> eventCreatorList;
         if (creator != null) {

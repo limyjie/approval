@@ -277,13 +277,13 @@
     <resultMap id="tempMap" type="java.util.Map">
         <result property="eventName" column="EVENT_NAME"/>
         <result property="eventId" column="IDNO"/>
-        <collection property="creatorList" column="IDNO"
+        <collection property="creatorList" column="MODEL_ID"
                     ofType="com.prd.approval.entity.EventCreator"
                     select="com.prd.approval.dao.EventCreatorDAO.selectEventCreatorByTemplateId"/>
     </resultMap>
 
     <select id="selectEventAndOriginatorByCase" resultMap="tempMap">
-        SELECT e.EVENT_NAME,e.IDNO
+        SELECT e.EVENT_NAME,e.MODEL_ID
         FROM AP_EVENT e
         WHERE IS_MODEL = 0
         <if test="billNo != null">

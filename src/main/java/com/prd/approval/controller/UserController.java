@@ -34,7 +34,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //@PostMapping("/login")
+    @PostMapping("/login")
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ResponseUtil<Map<String, String>> login(@RequestBody User webUser) {
 

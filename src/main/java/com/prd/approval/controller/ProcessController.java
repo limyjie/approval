@@ -44,7 +44,13 @@ public class ProcessController {
     public ResponseUtil<Process> addProcess(@RequestBody Map<String, Object> map) {
 
         Process process = JSON.parseObject(JSON.toJSONString(map.get("process")), Process.class);
-        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(map.get("list")), ArrayList.class);
+
+        List list = (List)map.get("list");
+        if(list == null || list.isEmpty()){
+            return new ResponseUtil<>(0,"请添加审批人");
+        }
+
+        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(list), ArrayList.class);
 
         return processService.addProcess(process, arrayList);
     }

@@ -8,4 +8,6 @@ package com.prd.approval.dao;
 public interface IDNODAO {
     int selectCurrentIDNO();
     int updateIDNOAfterSelect();
+
+    int selectAvailableSeraByUserId(String user);
 }

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.prd.approval.entity.Event;
+import com.prd.approval.exception.DataConstraintException;
 import com.prd.approval.service.TemplateService;
 import com.prd.approval.utils.JavaTypeUtil;
 import com.prd.approval.utils.ResponseUtil;
@@ -70,7 +71,12 @@ public class TemplateController {
             originatorIdList.add(integer.toString());
         }
 
-        return templateService.addTemplate(event, processIdList, originatorIdList);
+        try {
+            return templateService.addTemplate(event, processIdList, originatorIdList);
+        } catch (DataConstraintException e) {
+            return new ResponseUtil<>(0, e.getMessage());
+        }
+
     }
 
     @GetMapping("/getAll")
@@ -126,21 +132,22 @@ public class TemplateController {
 
     /**
      * 执行审批事件窗口（只能查询到登陆者的记录，其他人的无法看到）
-     *      需求：根据已执行、全部、未执行查询审批事件
+     * 需求：根据已执行、全部、未执行查询审批事件
      * 传给后台数据：已执行、全部、未执行
+     *
      * @param map
      * @return
      */
     @PostMapping("/event/byStatus")
-    public ResponseUtil<List<Map<String,Object>>> getEventByStatus(@RequestBody Map<String,String> map){
+    public ResponseUtil<List<Map<String, Object>>> getEventByStatus(@RequestBody Map<String, String> map) {
         String status = map.get("status");
         String userId = map.get("userId");
-        if(userId == null || userId.trim().isEmpty()){
-            return new ResponseUtil<>(0,"用户编码不能为空");
+        if (userId == null || userId.trim().isEmpty()) {
+            return new ResponseUtil<>(0, "用户编码不能为空");
         }
-        if("done".equals(status) || "all".equals(status) || "todo".equals(status)){
-            return templateService.getEventByStatusAndUser(status,userId);
+        if ("done".equals(status) || "all".equals(status) || "todo".equals(status)) {
+            return templateService.getEventByStatusAndUser(status, userId);
         }
-        return new ResponseUtil<>(0,"审批事件状态错误");
+        return new ResponseUtil<>(0, "审批事件状态错误");
     }
 }

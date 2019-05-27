@@ -34,6 +34,20 @@ public class Message {
     public Message() {
     }
 
+    public Message(String id, String fromUser, String toUser, Integer sera, String subject, String content, Timestamp sendTime, String haveRead, String haveAlert, String haveDone, String messageType) {
+        this.id = id;
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.sera = sera;
+        this.subject = subject;
+        this.content = content;
+        this.sendTime = sendTime;
+        this.haveRead = haveRead;
+        this.haveAlert = haveAlert;
+        this.haveDone = haveDone;
+        this.messageType = messageType;
+    }
+
     @Override
     public String toString() {
         return "Message{" +

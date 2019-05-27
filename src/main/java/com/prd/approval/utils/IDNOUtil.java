@@ -28,4 +28,8 @@ public class IDNOUtil {
         idnodao.updateIDNOAfterSelect();
         return String.valueOf(idno);
     }
+
+    public static Integer getMessageSera(String userId){
+       return idnodao.selectAvailableSeraByUserId(userId);
+    }
 }

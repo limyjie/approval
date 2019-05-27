@@ -16,4 +16,10 @@
           AND GRNO = 'id'
     </update>
 
+    <select id="selectAvailableSeraByUserId" parameterType="String" resultType="java.lang.Integer">
+        SELECT MAX(SERA)+1
+        FROM MESSAGE
+        WHERE TOUSER = #{userId}
+    </select>
+
 </mapper>

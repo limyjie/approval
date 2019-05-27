@@ -95,6 +95,9 @@
 2. 当auditorList[i] 的审批结果为通过时，
     current.timeRemain--;
     current.status = '正在执行';
+    next.status = '正在执行'
+    向message插入type = ap 的消息
+    同时向ap message 也插入数据
     stepStaff.comment = '审批备注'
     stepStaff.result = '审批通过'
      2.1 如果current.timeRemain == 0，
@@ -115,6 +118,10 @@ spring boot  默认 模板 引擎：thymeleaf，
 需要我们把需要被该模板引擎渲染的视图（html页面或者JSP）放到resources/templates/这里
 
 需要被渲染的html页面加上：<html xmlns:th="http://www.thymeleaf.org">
+
+
+审批时，无论阶段的通过与否，到要给审批人发送 type = 0 的message
+审批时，如果当前阶段执行完毕，需要给下一个阶段的审批人发送 type = ap 的message
 
 
 

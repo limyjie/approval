@@ -7,6 +7,7 @@ package com.prd.approval.service.impl;
 import com.prd.approval.dao.*;
 import com.prd.approval.entity.*;
 import com.prd.approval.entity.Process;
+import com.prd.approval.exception.DataConstraintException;
 import com.prd.approval.service.TemplateService;
 import com.prd.approval.utils.IDNOUtil;
 import com.prd.approval.utils.LogUtil;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p></p>
@@ -94,7 +92,7 @@ public class TemplateServiceImpl implements TemplateService {
         eventBill.setIsModel(0);
         eventBill.setBillCode(event.getBillCode());
         eventBill.setBillName("采购申请立项");
-        eventBillDAO.insertEventBill(eventBill);
+
         //添加对应的发起人到ap_event_creator 发起人表
         List<EventCreator> eventCreatorList = new ArrayList<>();
         EventCreator eventCreator;
@@ -113,7 +111,7 @@ public class TemplateServiceImpl implements TemplateService {
             eventCreator.setCreatorDepartment(originator.getDepartment());
             eventCreatorList.add(eventCreator);
         }
-        eventCreatorDAO.insertEventCreator(eventCreatorList);
+
         //添加对应阶段到ap_event_ap_step_relation
         /*当ap_event为模板时(is_model = 1)，它与ap_step通过ap_event_ap_step_relation表连接，
         即ap_event.idno = ap_event_ap_step_relation.event_idno = ap_step.idno*/
@@ -134,9 +132,9 @@ public class TemplateServiceImpl implements TemplateService {
             eventStepRelation.setStepCount(processIdList.size());
             eventStepRelationList.add(eventStepRelation);
         }
+        eventBillDAO.insertEventBill(eventBill);
+        eventCreatorDAO.insertEventCreator(eventCreatorList);
         eventStepRelationDAO.insertRelationList(eventStepRelationList);
-
-
         int result = templateDAO.insertTemplate(event);
         if (result != 1) {
             return new ResponseUtil<>(0, "审批模板创建失败");
@@ -214,7 +212,7 @@ public class TemplateServiceImpl implements TemplateService {
 
         int result = templateDAO.updateTemplate(event);
         if (result == 0) {
-            return new ResponseUtil<>(0, "不存在编码为 " + event.getId() + " 的审批模板");
+            throw new DataConstraintException("不存在编码为 " + event.getId() + " 的审批模板");
         }
 
         // 修改发起人:先删除，后插入，不使用UPDATE语句是因为修改前后的发起人数可能不一样
@@ -225,7 +223,7 @@ public class TemplateServiceImpl implements TemplateService {
             //System.out.println("out "+originatorIdList.get(i));
             originator = auditorDAO.selectAuditorById(originatorIdList.get(i));
             if (originator == null) {
-                return new ResponseUtil<>(0, "发起人 " + originatorIdList.get(i) + " 不存在");
+                throw new DataConstraintException( "发起人 " + originatorIdList.get(i) + " 不存在");
             }
             eventCreator = createNewEventCreator(event.getId(),event.getSortNo(),originator.getId(),originator.getName(),originator.getDepartment());
             eventCreatorList.add(eventCreator);
@@ -273,9 +271,48 @@ public class TemplateServiceImpl implements TemplateService {
         return new ResponseUtil<>(1, "审批模板 " + templateId + " 删除成功");
     }
 
+
+    /*
+
+    * 审批事件 ID \名
+    * 阶段名
+    * 发起人
+    *
+    * */
     @Override
     public ResponseUtil<List<Map<String, Object>>> getEventByStatusAndUser(String status, String userId) {
-        List<Event> eventList = templateDAO.selectEventByStatusAndUser(status, userId);
+       /* List<Map<String,Object>> result = new LinkedList<>();
+        List<StepStaff>  stepStaffList = stepStaffDAO.selectByStaffIdAndStatus(userId,status);
+        for(StepStaff stepStaff:stepStaffList){
+            Process process = processDAO.selectProcessById(stepStaff.gethId());
+            System.out.println("process"+process);
+            Event event = templateDAO.selectEventById(process.getEventId());
+            System.out.println(event);
+           // List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getModelId());
+            Map<String,Object> map = new HashMap<>();
+            map.put("event",event);
+            map.put("process",process);
+            map.put("stepStaff",stepStaff);
+           // map.put("eventCreatorList",eventCreatorList);
+            result.add(map);
+        }
+        if(result.isEmpty()){
+            return new ResponseUtil<>(0, "查询结果为空");
+        }
+        return new ResponseUtil<>(1, "查询事件成功", result);*/
+       List<Map<String,Object>> map = templateDAO.selectTemp(userId,status);
+       for(Map<String,Object> map1:map){
+           String eventId = map1.get("eventId").toString();
+           Event event = templateDAO.selectTemplateById(eventId);
+           List<EventCreator> eventCreatorList = eventCreatorDAO.selectEventCreatorByTemplateId(event.getModelId());
+           map1.put("eventCreatorList",eventCreatorList);
+       }
+
+       return new ResponseUtil<>(1,"成功",map);
+
+
+
+      /*  List<Event> eventList = templateDAO.selectEventByStatusAndUser(status, userId);
         List<Map<String, Object>> mapList = new ArrayList<>();
         Map<String, Object> map;
         for (Event event : eventList) {
@@ -291,6 +328,7 @@ public class TemplateServiceImpl implements TemplateService {
             return new ResponseUtil<>(0, "查询结果为空");
         }
         return new ResponseUtil<>(1, "查询事件成功", mapList);
+*/
     }
 
     /**

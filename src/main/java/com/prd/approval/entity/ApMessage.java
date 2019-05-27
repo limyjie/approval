@@ -19,6 +19,14 @@ public class ApMessage {
     public ApMessage() {
     }
 
+    public ApMessage(String id, String eventId, String staffNo, String messageId, String stepId, String staffId) {
+        this.id = id;
+        this.eventId = eventId;
+        this.staffNo = staffNo;
+        this.messageId = messageId;
+        this.stepId = stepId;
+        this.staffId = staffId;
+    }
 
     @Override
     public String toString() {

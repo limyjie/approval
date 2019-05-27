@@ -31,4 +31,7 @@ public interface StepStaffDAO {
     int selectStepUnApprovalPersonNumber(String stepId);
 
     StepStaff selectByStepStaff(StepStaff param);
+
+    List<StepStaff> selectByStaffIdAndStatus(@Param("userId")String userId,
+                                             @Param("status")String status);
 }

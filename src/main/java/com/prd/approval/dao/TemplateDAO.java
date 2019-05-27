@@ -82,4 +82,9 @@ public interface TemplateDAO {
         }
         return finalList;
     }
+
+    Event selectEventById(String eventId);
+
+    List<Map<String,Object>> selectTemp(@Param("userId")String userId,
+                                  @Param("status") String status);
 }

@@ -133,12 +133,11 @@ public class UserController {
      */
     @PostMapping("/event/detail")
     public ResponseUtil<Map<String, Object>> getEventProcessCreator(@RequestBody Map<String, String> map) {
-
         return userService.getEventProcessCreator(map);
     }
 
-    @GetMapping("/event/allDetail/{stepStaffId}")
-    public ResponseUtil<Map<String, Object>> getEventAllProcessCreatorAuditor(@PathVariable("stepStaffId") String stepStaffId) {
+    @GetMapping("/event/allDetail/{eventId}")
+    public ResponseUtil<Map<String, Object>> getEventAllProcessCreatorAuditor(@PathVariable("eventId") String stepStaffId) {
         return userService.getEventAllProcessCreatorAuditor(stepStaffId);
     }
 

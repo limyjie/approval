@@ -85,14 +85,14 @@
         <result column="ATTRIBUTE1" property="attribute1"/>
         <result column="ATTRIBUTE2" property="attribute2"/>
         <result column="ATTRIBUTE3" property="attribute3"/>
-        <association property="purchaseStaffName" column="PURCHASE_STAFF" select="otherMapper.selectPersonNameById"/>
-        <association property="creatorName" column="CREATE_BY" select="otherMapper.selectPersonNameById"/>
-        <association property="whCode" column="WH_ID" select="selectWarehouseCode"/>
-        <association property="warehouseName" column="WH_ID" select="selectWarehouseName"/>
-        <association property="itemName" column="ITEM" select="selectItemName"/>
+        <association property="purchaseStaffName" column="PURCHASE_STAFF" select="com.prd.approval.dao.OtherDAO.selectPersonNameById" javaType="String"/>
+        <association property="creatorName" column="CREATE_BY" select="com.prd.approval.dao.OtherDAO.selectPersonNameById" javaType="String"/>
+        <association property="whCode" column="WH_ID" select="selectWarehouseCode" javaType="String" />
+        <association property="warehouseName" column="WH_ID" select="selectWarehouseName" javaType="String"/>
+        <association property="itemName" column="ITEM" select="selectItemName" javaType="String"/>
         <association property="unitName" column="UNIT" select="selectUnitName"/>
-        <association property="projectName" column="PROJECT_NO"
-                     select="com.prd.approval.dao.ApplyHeaderDAO.selectProjectNameByPROJ"/>
+        <!--<association property="projectName" column="PROJECT_NO"
+                     select="com.prd.approval.dao.OtherDAO.selectProjectNameByPROJ" javaType="String"/>-->
     </resultMap>
 
     <select id="selectApplyListByHID" parameterType="String" resultMap="applyListMap">

@@ -24,4 +24,6 @@ public interface ProcessDAO {
     List<Process> selectProcessBelongEvent(String eventId);
 
     Process selectNextProcess(Process currentProcess);
+
+    Process selectEventProcess(String gethId);
 }

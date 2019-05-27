@@ -14,4 +14,5 @@ import java.util.List;
  */
 public interface ApplyListDAO {
     List<ApplyList> selectApplyListByHID(String hid);
+    String selectUnitName(String unit);
 }

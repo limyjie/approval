@@ -283,7 +283,7 @@
     </resultMap>
 
     <select id="selectEventAndOriginatorByCase" resultMap="tempMap">
-        SELECT e.EVENT_NAME,e.MODEL_ID
+        SELECT e.EVENT_NAME,e.MODEL_ID,e.IDNO
         FROM AP_EVENT e
         WHERE IS_MODEL = 0
         <if test="billNo != null">
@@ -302,4 +302,28 @@
     </select>
 
 
+    <select id="selectEventById" resultMap="templateMap" parameterType="String">
+        SELECT <include refid="templateColumn"/>
+        FROM AP_EVENT
+        WHERE IDNO = #{eventId}
+    </select>
+
+
+    <select id="selectTemp" resultType="java.util.Map">
+        select a.EVENT_NAME "eventName" ,a.IDNO "eventId" ,b.STEP_NAME "stepName",b.IDNO "stepId"
+        from ap_event a, ap_step b, ap_step_staff c
+        where a.idno = b.event_id
+          and b.idno = c.hid
+          and a.is_model = 0
+          and c.staff_no = #{userId}
+          <if test=" status == 'all' ">
+
+          </if>
+        <if test=" status  == 'todo' ">
+            AND c.status = '1'
+        </if>
+        <if test=" status == 'done' ">
+            AND c.STATUS = '2'
+        </if>
+    </select>
 </mapper>

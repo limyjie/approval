@@ -19,9 +19,9 @@
         <result column="HAVEALERT" property="haveAlert"/>
         <result column="HAVEDONE" property="haveDone"/>
         <result column="MESSAGE_TYPE" property="messageType"/>
-        <association property="fromUserName" select="otherMapper.selectPersonNameById"
+        <association property="fromUserName" select="com.prd.approval.dao.OtherDAO.selectPersonNameById"
                      column="FROMUSER" javaType="String"/>
-        <association property="toUserName" select="otherMapper.selectPersonNameById"
+        <association property="toUserName" select="com.prd.approval.dao.OtherDAO.selectPersonNameById"
                      column="TOUSER" javaType="String"/>
     </resultMap>
 
@@ -34,6 +34,7 @@
         <if test="messageType != null">
             AND MESSAGE_TYPE = #{messageType}
         </if>
+
 
     </select>
 
@@ -131,5 +132,43 @@
         WHERE IDNO = #{id}
     </update>
 
+    <update id="updateMessageByApMessageStaffId" parameterType="String">
+        UPDATE MESSAGE
+        SET HAVEDONE = '2'
+        WHERE IDNO = (SELECT MESSAGE_ID FROM AP_MESSAGE WHERE STAFF_ID = #{stepStaffId})
+    </update>
+
+    <update id="cancelOtherAlert" parameterType="String">
+        UPDATE MESSAGE
+        SET HAVEALERT = '2'
+        WHERE HAVEALERT = '0'
+          AND IDNO IN (
+                      SELECT MESSAGE_ID
+                      FROM AP_MESSAGE
+                      WHERE EVENT_ID = #{eventId}
+                      )
+    </update>
+
+    <update id="updateMessageByEventIdAndLastStepSortNo">
+        UPDATE MESSAGE
+        SET HAVEALERT = '2'
+        WHERE HAVEALERT = '0'
+        AND IDNO IN(
+                SELECT MESSAGE_ID
+                FROM AP_MESSAGE
+                WHERE EVENT_ID =#{eventId}
+                AND STEP_ID  = (
+                        SELECT STEP_ID
+                        FROM AP_STEP
+                        WHERE AP_STEP.EVENT_ID = #{eventId}
+                        AND SORT_NO = #{lastStepSortNo}
+                        )
+                )
+    </update>
+
+    <insert id="insertApMessage" parameterType="com.prd.approval.entity.ApMessage">
+        INSERT INTO AP_MESSAGE(IDNO,MESSAGE_ID,STAFF_NO,EVENT_ID,STEP_ID,STAFF_ID)
+        VALUES (#{id},#{messageId},#{staffNo},#{eventId},#{stepId},#{staffId})
+    </insert>
 
 </mapper>

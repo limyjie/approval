@@ -48,6 +48,7 @@
         SELECT
         <include refid="processColumn"/>
         FROM AP_STEP
+        WHERE EVENT_ID IS NULL
     </select>
 
     <select id="selectProcessById" parameterType="String" resultMap="processMap">

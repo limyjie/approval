@@ -76,6 +76,7 @@ post
     "template":{
     	 "eventName":"eventName",
     	 "isActive":"1",
+    	 "billCode":"pur_apply_pre",
 		 "eventDescription":"eventDescription",
 		 "createBy":"9999"
     },

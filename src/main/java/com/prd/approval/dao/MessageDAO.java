@@ -34,4 +34,13 @@ public interface MessageDAO {
     int updateMessage(Message message);
 
     ApMessage selectApMessageByMessageId(String toUserId);
+
+    int updateMessageByApMessageStaffId(String stepStaffId);
+
+    int cancelOtherAlert(String eventId);
+
+    int updateMessageByEventIdAndLastStepSortNo(@Param("eventId")String eventId,
+                                                @Param("lastStepSortNo")Integer lastStepSortNo);
+
+    int insertApMessage(ApMessage apMessage);
 }

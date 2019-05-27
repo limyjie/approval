@@ -145,4 +145,23 @@
         </if>
 
     </select>
+
+    <select id="selectByStaffIdAndStatus" resultMap="stepStaffMap">
+        SELECT <include refid="stepStaffColumn"/>
+        FROM AP_STEP_STAFF
+        WHERE STAFF_NO = #{userId}
+        <choose>
+            <when test=" status == 'all'">
+
+            </when>
+            <when test=" status == 'todo' ">
+                AND STATUS = '1'
+            </when>
+            <when test=" status == 'done' ">
+                AND STATUS = '2'
+            </when>
+        </choose>
+
+
+    </select>
 </mapper>

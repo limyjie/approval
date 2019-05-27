@@ -39,9 +39,9 @@
         <result column="COMMENTS" property="comments"/>
         <result column="EXPIRATION_DATE" property="expirationDate"/>
         <result column="PROJECT_NO" property="projectNo"/>
-        <association column="APPLY_DEPA" property="applyDepartmentName" select="otherMapper.selectDepartmentNameById" javaType="String"/>
-        <association property="creatorName" column="CREATE_BY" select="otherMapper.selectPersonNameById" javaType="String"/>
-        <association property="projectName" column="PROJECT_NO" select="otherMapper.selectProjectNameByPROJ" javaType="String"/>
+        <association column="APPLY_DEPA" property="applyDepartmentName" select="com.prd.approval.dao.OtherDAO.selectDepartmentNameById" javaType="String"/>
+        <association property="creatorName" column="CREATE_BY" select="com.prd.approval.dao.OtherDAO.selectPersonNameById" javaType="String"/>
+        <association property="projectName" column="PROJECT_NO" select="com.prd.approval.dao.OtherDAO.selectProjectNameByPROJ"    javaType="String"/>
         <collection property="applyListList"
                     column="APPLY_NO"
                     javaType="ArrayList"
@@ -57,6 +57,11 @@
 
 
 
+    <update id="updateStatusByApplyNo">
+        UPDATE PUR_APPLY_HEAD
+        SET STATUS = #{status}
+        WHERE APPLY_NO = #{applyNo}
+    </update>
 
 
 

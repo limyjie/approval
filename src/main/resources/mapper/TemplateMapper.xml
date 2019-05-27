@@ -310,7 +310,7 @@
 
 
     <select id="selectTemp" resultType="java.util.Map">
-        select a.EVENT_NAME "eventName" ,a.IDNO "eventId" ,b.STEP_NAME "stepName",b.IDNO "stepId"
+        select a.EVENT_NAME "eventName" ,a.IDNO "eventId" ,b.STEP_NAME "stepName",b.IDNO "stepId",c.IDNO "stepStaffId"
         from ap_event a, ap_step b, ap_step_staff c
         where a.idno = b.event_id
           and b.idno = c.hid

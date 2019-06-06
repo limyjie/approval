@@ -7,22 +7,14 @@ package com.prd.approval.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.prd.approval.entity.Event;
 import com.prd.approval.exception.DataConstraintException;
 import com.prd.approval.service.TemplateService;
-import com.prd.approval.utils.JavaTypeUtil;
 import com.prd.approval.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +31,11 @@ import java.util.Map;
 public class TemplateController {
 
 
-    private ObjectMapper mapper;
-
     @Autowired
-    public TemplateController(ObjectMapper mapper) {
-        this.mapper = mapper;
+    public TemplateController(TemplateService templateService) {
+        this.templateService = templateService;
     }
 
-    @Autowired
     private TemplateService templateService;
 
     /**
@@ -58,22 +47,17 @@ public class TemplateController {
     @PostMapping("/add")
     public ResponseUtil<Event> add(@RequestBody Map map, HttpServletRequest request) {
         Event event = JSON.parseObject(JSON.toJSONString(map.get("template")), Event.class);
-        ArrayList<Integer> processIdStringList = JSONArray.parseObject(JSON.toJSONString(map.get("processIdList")), ArrayList.class);
-        ArrayList<Integer> originatorIdStringList = JSONArray.parseObject(JSON.toJSONString(map.get("originatorIdList")), ArrayList.class);
-
-
-        ArrayList<String> processIdList = new ArrayList<>();
-        ArrayList<String> originatorIdList = new ArrayList<>();
-
-        for (Integer integer : processIdStringList) {
-            processIdList.add(integer.toString());
-        }
-        for (Integer integer : originatorIdStringList) {
-            originatorIdList.add(integer.toString());
-        }
+        ArrayList<String> processIdStringList = JSONArray.parseObject(
+                JSON.toJSONString(map.get("processIdList")),
+                new TypeReference<ArrayList<String>>() {
+                });
+        ArrayList<String> originatorIdStringList = JSONArray.parseObject(
+                JSON.toJSONString(map.get("originatorIdList")),
+                new TypeReference<ArrayList<String>>() {
+                });
 
         try {
-            return templateService.addTemplate(event, processIdList, originatorIdList);
+            return templateService.addTemplate(event, processIdStringList, originatorIdStringList);
         } catch (DataConstraintException e) {
             return new ResponseUtil<>(0, e.getMessage());
         }
@@ -103,35 +87,23 @@ public class TemplateController {
     }
 
     @PostMapping("/modify")
-    public ResponseUtil<Event> modifyTemplate(@RequestBody Map map) throws IOException {
+    public ResponseUtil<Event> modifyTemplate(@RequestBody Map map) {
         Event event = JSON.parseObject(JSON.toJSONString(map.get("template")), Event.class);
 
-    /* ArrayList<Integer> originatorIdList = JSONArray.parseObject(JSON.toJSONString(map.get("originatorIdList")), ArrayList.class);
-        ArrayList<Integer> processIdList = JSONArray.parseObject(JSON.toJSONString(map.get("processIdList")), ArrayList.class);
-
-        ArrayList<String> originatorIdStrList = new ArrayList<>();
-        ArrayList<String> processIdStrList = new ArrayList<>();
-        for (Integer i : originatorIdList) {
-            originatorIdStrList.add(i.toString());
-        }
-        for (Integer i : processIdList) {
-            processIdStrList.add(i.toString());
-        }*/
         ArrayList<String> originatorIdStrList = JSONArray.parseObject(
                 JSON.toJSONString(map.get("originatorIdList")),
-                new TypeReference<ArrayList<String>>() {});
+                new TypeReference<ArrayList<String>>() {
+                });
 
         ArrayList<String> processIdStrList = JSONArray.parseObject(
                 JSON.toJSONString(map.get("processIdList")),
-                new TypeReference<ArrayList<String>>() {});
+                new TypeReference<ArrayList<String>>() {
+                });
 
         return templateService.modifyTemplate(event, originatorIdStrList, processIdStrList);
 
     }
 
-    public JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {
-        return mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
-    }
 
     /**
      * 执行审批事件窗口（只能查询到登陆者的记录，其他人的无法看到）

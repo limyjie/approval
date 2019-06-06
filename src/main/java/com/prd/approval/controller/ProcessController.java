@@ -7,24 +7,14 @@ package com.prd.approval.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.TypeReference;
 import com.prd.approval.entity.Process;
 import com.prd.approval.service.ProcessService;
-import com.prd.approval.utils.LogUtil;
 import com.prd.approval.utils.ResponseUtil;
-import com.prd.approval.validation.ProcessValid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import sun.rmi.runtime.Log;
 
-import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +43,9 @@ public class ProcessController {
         if (process.getTimesCount()==null){
             return new ResponseUtil<>(0,"通过次数不能为空");
         }
-        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(param), ArrayList.class);
+        ArrayList<Integer> arrayList = JSONArray.parseObject(
+                JSON.toJSONString(param),
+                new TypeReference<ArrayList<Integer>>(){});
 
         return processService.addProcess(process, arrayList);
     }
@@ -77,7 +69,8 @@ public class ProcessController {
     @PostMapping("/modify")
     public ResponseUtil<Process> modifyProcess(@RequestBody Map<String, Object> map) {
         Process process = JSON.parseObject(JSON.toJSONString(map.get("process")), Process.class);
-        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(map.get("list")), ArrayList.class);
+        ArrayList<Integer> arrayList = JSONArray.parseObject(JSON.toJSONString(map.get("list")),
+                new TypeReference<ArrayList<Integer>>(){});
         return processService.modifyProcess(process, arrayList);
     }
 

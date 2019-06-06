@@ -6,6 +6,7 @@ package com.prd.approval.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,12 +106,7 @@ public class TemplateController {
     public ResponseUtil<Event> modifyTemplate(@RequestBody Map map) throws IOException {
         Event event = JSON.parseObject(JSON.toJSONString(map.get("template")), Event.class);
 
-
-        //     JavaType type = getCollectionType(map.get("originatorIdList").getClass(),Integer.class);
-        //   mapper.getTypeFactory().
-        //     String jsonInput = map.get("originatorIdList").toString();
-        //    List<Integer> originatorIdList = mapper.readValue(jsonInput,type);
-        ArrayList<Integer> originatorIdList = JSONArray.parseObject(JSON.toJSONString(map.get("originatorIdList")), ArrayList.class);
+    /* ArrayList<Integer> originatorIdList = JSONArray.parseObject(JSON.toJSONString(map.get("originatorIdList")), ArrayList.class);
         ArrayList<Integer> processIdList = JSONArray.parseObject(JSON.toJSONString(map.get("processIdList")), ArrayList.class);
 
         ArrayList<String> originatorIdStrList = new ArrayList<>();
@@ -120,8 +116,15 @@ public class TemplateController {
         }
         for (Integer i : processIdList) {
             processIdStrList.add(i.toString());
-        }
-        System.out.println(event.toString());
+        }*/
+        ArrayList<String> originatorIdStrList = JSONArray.parseObject(
+                JSON.toJSONString(map.get("originatorIdList")),
+                new TypeReference<ArrayList<String>>() {});
+
+        ArrayList<String> processIdStrList = JSONArray.parseObject(
+                JSON.toJSONString(map.get("processIdList")),
+                new TypeReference<ArrayList<String>>() {});
+
         return templateService.modifyTemplate(event, originatorIdStrList, processIdStrList);
 
     }
